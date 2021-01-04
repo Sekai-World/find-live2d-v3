@@ -56,6 +56,7 @@ export class LAppTextureManager {
 
     // 触发数据onload
     const img = new Image();
+    img.crossOrigin="anonymous"
     img.onload = () => {
       // 创建纹理对象
       const tex: WebGLTexture = gl.createTexture() as any;
