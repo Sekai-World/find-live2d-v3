@@ -25,7 +25,7 @@
     "types": "tsc -d --emitDeclarationOnly --allowJs false --declarationDir ./dist/types/"
   },
   "types": "./dist/types/index.d.ts",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sekai-World/find-live2d-v3.git"
