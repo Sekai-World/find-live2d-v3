@@ -35,8 +35,8 @@ export class LAppView {
    */
   constructor() {
     this._programId = null as any;
-    this._back = null as any;
-    this._gear = null as any;
+    // this._back = null as any;
+    // this._gear = null as any;
 
     // 与触摸相关的事件管理
     this._touchManager = new TouchManager();
@@ -89,11 +89,11 @@ export class LAppView {
     this._touchManager = null as any;
     this._deviceToScreen = null as any;
 
-    this._gear.release();
-    this._gear = null as any;
+    // this._gear.release();
+    // this._gear = null as any;
 
-    this._back.release();
-    this._back = null as any;
+    // this._back.release();
+    // this._back = null as any;
 
     gl.deleteProgram(this._programId);
     this._programId = null as any;

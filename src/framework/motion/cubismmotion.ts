@@ -149,6 +149,7 @@ export namespace Live2DCubismFramework {
     public static create(
       buffer: ArrayBuffer,
       size: number,
+      name: string,
       onFinishedMotionHandler?: FinishedMotionCallback,
     ): CubismMotion {
       const ret = new CubismMotion();
@@ -156,6 +157,7 @@ export namespace Live2DCubismFramework {
       ret.parse(buffer, size);
       ret._sourceFrameRate = ret._motionData.fps;
       ret._loopDurationSeconds = ret._motionData.duration;
+      ret._name = name;
       ret._onFinishedMotion = onFinishedMotionHandler;
 
       // NOTE: Editorではループありのモーション書き出しは非対応

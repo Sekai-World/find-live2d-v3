@@ -280,7 +280,7 @@ export namespace Live2DCubismFramework {
       size: number,
       name: string,
       onFinishedMotionHandler?: FinishedMotionCallback,
-    ) => CubismMotion.create(buffer, size, onFinishedMotionHandler)
+    ) => CubismMotion.create(buffer, size, name, onFinishedMotionHandler)
 
     /**
      * 表情データの読み込み
