@@ -1,66 +1,66 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-/// <reference path="../live2dcubismcore.d.ts" />
 import { Live2DCubismFramework as cubismjson } from './utils/cubismjson';
 import { Live2DCubismFramework as cubismidmanager } from './id/cubismidmanager';
 import { Live2DCubismFramework as cubismrenderer } from './rendering/cubismrenderer';
-import { CubismLogInfo, CubismLogWarning, CSM_ASSERT } from './utils/cubismdebug';
+import {
+  CubismLogInfo,
+  CubismLogWarning,
+  CSM_ASSERT,
+} from './utils/cubismdebug';
 import Value = cubismjson.Value;
 import CubismIdManager = cubismidmanager.CubismIdManager;
 import CubismRenderer = cubismrenderer.CubismRenderer;
 
 export function strtod(s: string, endPtr: string[]): number {
-  let index: number = 0;
-  for (let i: number = 1; ; i++) {
+  let index = 0;
+  for (let i = 1; ; i++) {
     const testC: string = s.slice(i - 1, i);
 
-    // 跳过，因为有可能是索引或减号
+    // 指数・マイナスの可能性があるのでスキップする
     if (testC == 'e' || testC == '-' || testC == 'E') {
       continue;
-    }
+    } // 文字列の範囲を広げていく
 
-    // 扩展字符串的范围
     const test: string = s.substring(0, i);
-    const number: number = Number(test);
+    const number = Number(test);
     if (isNaN(number)) {
-      // 完成因为它不能再被识别为数值
+      // 数値として認識できなくなったので終了
       break;
-    }
+    } // 最後に数値としてできたindexを格納しておく
 
-    // 最后，将索引存储为数值
     index = i;
   }
-  let d = parseFloat(s);  // 解析的号码
+  let d = parseFloat(s); // パースした数値
 
   if (isNaN(d)) {
-    // 完成因为它不能再被识别为数值
+    // 数値として認識できなくなったので終了
     d = NaN;
   }
 
-  endPtr[0] = s.slice(index);　// 尾随字符串
-
+  endPtr[0] = s.slice(index); // 後続の文字列
   return d;
 }
 
 export namespace Live2DCubismFramework {
-  // 初始化文件范围变量
+  // ファイルスコープの変数を初期化
 
-  let s_isStarted: boolean = false;
-  let s_isInitialized: boolean = false;
-  let s_option: Option = null as any;
-  let s_cubismIdManager: CubismIdManager = null as any;
+  let s_isStarted = false;
+  let s_isInitialized = false;
+  let s_option: Option = null;
+  let s_cubismIdManager: CubismIdManager = null;
 
   /**
-   * 框架中使用的常量声明
+   * Framework内で使う定数の宣言
    */
   export namespace Constant {
-    export const vertexOffset: number = 0;     // 网格顶点偏移值
-    export const vertexStep: number = 2;       // 网格顶点步长值
+    export const vertexOffset = 0; // メッシュ頂点のオフセット値
+    export const vertexStep = 2; // メッシュ頂点のステップ値
   }
 
   export function csmDelete<T>(address: T): void {
@@ -68,24 +68,24 @@ export namespace Live2DCubismFramework {
       return;
     }
 
-    address = void 0 as any;
+    address = void 0;
   }
 
   /**
-   * Live2D Cubism3原创工作流程SDK的切入点
-   * 在使用开始时调用CubismFramework.initialize（）并以CubismFramework.dispose（）结束。
+   * Live2D Cubism SDK Original Workflow SDKのエントリポイント
+   * 利用開始時はCubismFramework.initialize()を呼び、CubismFramework.dispose()で終了する。
    */
   export class CubismFramework {
     /**
-     * 启用Cubism Framework API。
-     *  确保在执行API之前执行此功能。
-     *  准备完成后，即使再次执行，也会跳过内部处理。
+     * Cubism FrameworkのAPIを使用可能にする。
+     *  APIを実行する前に必ずこの関数を実行すること。
+     *  一度準備が完了して以降は、再び実行しても内部処理がスキップされます。
      *
-     * @param    option      选项类实例
+     * @param    option      Optionクラスのインスタンス
      *
-     * @return   准备过程完成后返回true。
+     * @return   準備処理が完了したらtrueが返ります。
      */
-    public static startUp(option: Option = null as any): boolean {
+    public static startUp(option: Option = null): boolean {
       if (s_isStarted) {
         CubismLogInfo('CubismFramework.startUp() is already done.');
         return s_isStarted;
@@ -99,15 +99,16 @@ export namespace Live2DCubismFramework {
 
       s_isStarted = true;
 
-      // 显示Live2D Cubism Core版本信息
+      // Live2D Cubism Coreバージョン情報を表示
       if (s_isStarted) {
         const version: number = Live2DCubismCore.Version.csmGetVersion();
-        const major: number = ((version & 0xFF000000) >> 24);
-        const minor: number = ((version & 0x00FF0000) >> 16);
-        const patch: number = ((version & 0x0000FFFF));
+        const major: number = (version & 0xff000000) >> 24;
+        const minor: number = (version & 0x00ff0000) >> 16;
+        const patch: number = version & 0x0000ffff;
         const versionNumber: number = version;
 
-        CubismLogInfo(`Live2D Cubism Core version: {0}.{1}.{2} ({3})`,
+        CubismLogInfo(
+          `Live2D Cubism Core version: {0}.{1}.{2} ({3})`,
           ('00' + major).slice(-2),
           ('00' + minor).slice(-2),
           ('0000' + patch).slice(-4),
@@ -121,19 +122,19 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 清除StartUp（）初始化的CubismFramework的每个参数。
-     * 重新使用已经Dispose（）的CubismFramework时请使用它。
+     * StartUp()で初期化したCubismFrameworkの各パラメータをクリアします。
+     * Dispose()したCubismFrameworkを再利用する際に利用してください。
      */
     public static cleanUp(): void {
       s_isStarted = false;
       s_isInitialized = false;
-      s_option = null as any;
-      s_cubismIdManager = null as any;
+      s_option = null;
+      s_cubismIdManager = null;
     }
 
     /**
-     * 初始化Cubism Framework中的资源并使模型可显示。<br>
-     * 要再次initialize()，必须首先执行Dispose（）
+     * Cubism Framework内のリソースを初期化してモデルを表示可能な状態にします。<br>
+     *     再度Initialize()するには先にDispose()を実行する必要があります。
      */
     public static initialize(): void {
       CSM_ASSERT(s_isStarted);
@@ -142,15 +143,17 @@ export namespace Live2DCubismFramework {
         return;
       }
 
-      // --- 使用s_isInitialized进行连续初始化保护 ---
-      // 确保不会持续分配资源。
-      // 要再次初initialize()，必须首先执行Dispose（）
+      // --- s_isInitializedによる連続初期化ガード ---
+      // 連続してリソース確保が行われないようにする。
+      // 再度Initialize()するには先にDispose()を実行する必要がある。
       if (s_isInitialized) {
-        CubismLogWarning('CubismFramework.initialize() skipped, already initialized.');
+        CubismLogWarning(
+          'CubismFramework.initialize() skipped, already initialized.',
+        );
         return;
       }
 
-      // ---- static 初始化 ----
+      // ---- static 初期化 ----
       Value.staticInitializeNotForClientCall();
 
       s_cubismIdManager = new CubismIdManager();
@@ -161,9 +164,9 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 释放Cubism Framework中的所有资源
-     * 但是，不会释放外部保留的资源。
-     * 必须妥善处理外部。
+     * Cubism Framework内の全てのリソースを解放します。
+     *      ただし、外部で確保されたリソースについては解放しません。
+     *      外部で適切に破棄する必要があります。
      */
     public static dispose(): void {
       CSM_ASSERT(s_isStarted);
@@ -172,9 +175,10 @@ export namespace Live2DCubismFramework {
         return;
       }
 
-      // --- 由s_isInitialized判定是否未执行过初始化 ---
-      // 要dispose（），首先需要执行initialize（）。
+      // --- s_isInitializedによる未初期化解放ガード ---
+      // dispose()するには先にinitialize()を実行する必要がある。
       if (!s_isInitialized) {
+        // false...リソース未確保の場合
         CubismLogWarning('CubismFramework.dispose() skipped, not initialized.');
         return;
       }
@@ -182,9 +186,9 @@ export namespace Live2DCubismFramework {
       Value.staticReleaseNotForClientCall();
 
       s_cubismIdManager.release();
-      s_cubismIdManager = null as any;
+      s_cubismIdManager = null;
 
-      // 释放渲染器静态资源（着色器程序等）
+      // レンダラの静的リソース（シェーダプログラム他）を解放する
       CubismRenderer.staticRelease();
 
       s_isInitialized = false;
@@ -192,27 +196,26 @@ export namespace Live2DCubismFramework {
       CubismLogInfo('CubismFramework.dispose() is complete.');
     }
 
-
     /**
-     * 您是否准备好使用Cubism Framework API
-     * @return 如果API可以使用，则返回true。
+     * Cubism FrameworkのAPIを使用する準備が完了したかどうか
+     * @return APIを使用する準備が完了していればtrueが返ります。
      */
     public static isStarted(): boolean {
       return s_isStarted;
     }
 
     /**
-     * 是否已执行Cubism Framework资源初始化
-     * @return 如果资源分配完成，则返回true
+     * Cubism Frameworkのリソース初期化がすでに行われているかどうか
+     * @return リソース確保が完了していればtrueが返ります
      */
     public static isInitialized(): boolean {
       return s_isInitialized;
     }
 
     /**
-     * 执行绑定到Core API的日志功能
+     * Core APIにバインドしたログ関数を実行する
      *
-     * @praram message 消息日志
+     * @praram message ログメッセージ
      */
     public static coreLogFunction(message: string): void {
       // Return if logging not possible.
@@ -224,9 +227,9 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 返回当前日志输出级别设置的值。
+     * 現在のログ出力レベル設定の値を返す。
      *
-     * @return  当前日志输出级别设置值
+     * @return  現在のログ出力レベル設定の値
      */
     public static getLoggingLevel(): LogLevel {
       if (s_option != null) {
@@ -236,36 +239,34 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 获取ID Manager的实例
-     * @return CubismManager类的实例
+     * IDマネージャのインスタンスを取得する
+     * @return CubismManagerクラスのインスタンス
      */
     public static getIdManager(): CubismIdManager {
       return s_cubismIdManager;
     }
 
     /**
-     * 用作静态类
-     * 不要实例化
+     * 静的クラスとして使用する
+     * インスタンス化させない
      */
-    private constructor() {
-
-    }
+    private constructor() {}
   }
 }
 
 export class Option {
-  public logFunction: Live2DCubismCore.csmLogFunction = undefined as any;   // 日志输出的函数对象
-  public loggingLevel: LogLevel = undefined as any;  // 设置日志输出级别
+  public logFunction: Live2DCubismCore.csmLogFunction; // ログ出力の関数オブジェクト
+  public loggingLevel: LogLevel; // ログ出力レベルの設定
 }
 
 /**
  * ログ出力のレベル
  */
 export enum LogLevel {
-  LogLevel_Verbose = 0,   // 详细日志
-  LogLevel_Debug,         // 调试日志
-  LogLevel_Info,          // 信息日志
-  LogLevel_Warning,       // 警告日志
-  LogLevel_Error,         // 错误日志
-  LogLevel_Off,           // 禁用日志输出
+  LogLevel_Verbose = 0, // 詳細ログ
+  LogLevel_Debug, // デバッグログ
+  LogLevel_Info, // Infoログ
+  LogLevel_Warning, // 警告ログ
+  LogLevel_Error, // エラーログ
+  LogLevel_Off, // ログ出力無効
 }

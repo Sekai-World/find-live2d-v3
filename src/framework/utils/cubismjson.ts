@@ -1,8 +1,8 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 import { Live2DCubismFramework as csmstring } from '../type/csmstring';
@@ -17,20 +17,20 @@ import csmMap_iterator = csmmap.iterator;
 import csmString = csmstring.csmString;
 
 export namespace Live2DCubismFramework {
-  // 使用StaticInitializeNotForClientCall（）初始化
-  const CSM_JSON_ERROR_TYPE_MISMATCH: string = 'Error: type mismatch';
-  const CSM_JSON_ERROR_INDEX_OF_BOUNDS: string = 'Error: index out of bounds';
-
+  // StaticInitializeNotForClientCall()で初期化する
+  const CSM_JSON_ERROR_TYPE_MISMATCH = 'Error: type mismatch';
+  const CSM_JSON_ERROR_INDEX_OF_BOUNDS = 'Error: index out of bounds';
 
   /**
-   * 已解析的JSON元素元素的基类。
+   * パースしたJSONエレメントの要素の基底クラス。
    */
   export abstract class Value {
 
-    public static errorValue: Value;   // 作为临时返回值返回的错误。 在CubismFramework :: Dispose之前不要删除
-    public static nullValue: Value;    // NULL作为临时返回值返回。  在CubismFramework :: Dispose之前不要删除
+    public static errorValue: Value; // 一時的な返り値として返すエラー。 CubismFramework::Disposeするまではdeleteしない
+    public static nullValue: Value; // 一時的な返り値として返すNULL。   CubismFramework::Disposeするまではdeleteしない
+
     /**
-     * 初始化方法
+     * 初期化用メソッド
      */
     public static staticInitializeNotForClientCall(): void {
       JsonBoolean.trueValue = new JsonBoolean(true);
@@ -43,118 +43,120 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 发布方式
+     * リリース用メソッド
      */
     public static staticReleaseNotForClientCall(): void {
-      JsonBoolean.trueValue = null as any;
-      JsonBoolean.falseValue = null as any;
-      JsonError.errorValue = null as any;
-      Value.nullValue = null as any;
-      Value.s_dummyKeys = null as any;
+      JsonBoolean.trueValue = null;
+      JsonBoolean.falseValue = null;
+      JsonError.errorValue = null;
+      Value.nullValue = null;
+      Value.s_dummyKeys = null;
 
-      JsonBoolean.trueValue = null as any;
-      JsonBoolean.falseValue = null as any;
-      JsonError.errorValue = null as any;
-      Value.nullValue = null as any;
-      Value.s_dummyKeys = null as any;
+      JsonBoolean.trueValue = null;
+      JsonBoolean.falseValue = null;
+      JsonError.errorValue = null;
+      Value.nullValue = null;
+      Value.s_dummyKeys = null;
     }
 
-    private static s_dummyKeys: csmVector<string>; // 虚拟钥匙
+    private static s_dummyKeys: csmVector<string>; // ダミーキー
 
-    protected _stringBuffer: string = undefined as any; // 字符串缓冲区
+    protected _stringBuffer: string; // 文字列バッファ
     /**
-     * 构造函数
+     * コンストラクタ
      */
-    public constructor() {
-
-    }
+    public constructor() {}
 
     /**
-     * 以字符串形式返回元素(csmString型)
+     * 要素を文字列型で返す(csmString型)
      */
     public abstract getString(defaultValue?: string, indent?: string): string;
 
     /**
-     * 以字符串形式返回元素(string)
+     * 要素を文字列型で返す(string)
      */
     public getRawString(defaultValue?: string, indent?: string): string {
       return this.getString(defaultValue, indent);
     }
 
     /**
-     * 以数字类型返回元素(number)
+     * 要素を数値型で返す(number)
      */
-    public toInt(defaultValue: number = 0): number {
+    public toInt(defaultValue = 0): number {
       return defaultValue;
     }
 
     /**
-     * 以数字类型返回元素(number)
+     * 要素を数値型で返す(number)
      */
-    public toFloat(defaultValue: number = 0): number {
+    public toFloat(defaultValue = 0): number {
       return defaultValue;
     }
 
     /**
-     * 以布尔值的形式返回元素(boolean)
+     * 要素を真偽値で返す(boolean)
      */
-    public toBoolean(defaultValue: boolean = false): boolean {
+    public toBoolean(defaultValue = false): boolean {
       return defaultValue;
     }
 
     /**
-     * 返回大小
+     * サイズを返す
      */
     public getSize(): number {
       return 0;
     }
 
     /**
-     * 返回元素数组(Value[])
+     * 要素を配列で返す(Value[])
      */
-    public getArray(defaultValue: Value[] = null as any): Value[] {
+    public getArray(defaultValue: Value[] = null): Value[] {
       return defaultValue;
     }
 
     /**
-     * 返回容器中的元素(array)
+     * 要素をコンテナで返す(array)
      */
     public getVector(defaultValue?: csmVector<Value>): csmVector<Value> {
-      return defaultValue as any;
+      return defaultValue;
     }
 
     /**
-     * 将元素作为map返回(csmMap<csmString, Value>)
+     * 要素をマップで返す(csmMap<csmString, Value>)
      */
     public getMap(defaultValue?: csmMap<string, Value>): csmMap<string, Value> {
-      return defaultValue as any;
+      return defaultValue;
     }
 
     /**
-     * getValueByIndex[index]
+     * 添字演算子[index]
      */
     public getValueByIndex(index: number): Value {
-      return Value.errorValue.setErrorNotForClientCall(CSM_JSON_ERROR_TYPE_MISMATCH);
+      return Value.errorValue.setErrorNotForClientCall(
+        CSM_JSON_ERROR_TYPE_MISMATCH,
+      );
     }
 
     /**
-     * getValueByString[string | csmString]
+     * 添字演算子[string | csmString]
      */
     public getValueByString(s: string | csmString): Value {
-      return Value.nullValue.setErrorNotForClientCall(CSM_JSON_ERROR_TYPE_MISMATCH);
+      return Value.nullValue.setErrorNotForClientCall(
+        CSM_JSON_ERROR_TYPE_MISMATCH,
+      );
     }
 
     /**
-     * 返回容器中的映射键列表
+     * マップのキー一覧をコンテナで返す
      *
-     * @return 键列表
+     * @return マップのキーの一覧
      */
     public getKeys(): csmVector<string> {
       return Value.s_dummyKeys;
     }
 
     /**
-     * 如果值类型是错误值，则为True
+     * Valueの種類がエラー値ならtrue
      */
     public isError(): boolean {
       return false;
@@ -203,7 +205,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 如果参数的值相等，则为True
+     * 引数の値と等しければtrue
      */
     public equals(value: csmString): boolean;
     public equals(value: string): boolean;
@@ -214,14 +216,14 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 如果值的值为静态，则为true，如果为静态，则不释放
+     * Valueの値が静的ならtrue、静的なら解放しない
      */
     public isStatic(): boolean {
       return false;
     }
 
     /**
-     * 将错误值设置为Value
+     * Valueにエラー値をセットする
      */
     public setErrorNotForClientCall(errorStr: string): Value {
       return JsonError.errorValue;
@@ -229,23 +231,22 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 最小的轻量级JSON解析器，仅支持Ascii字符。
-   * 规范是JSON的子集。
-   * 用于加载配置文件（model3.json）
+   * Ascii文字のみ対応した最小限の軽量JSONパーサ。
+   * 仕様はJSONのサブセットとなる。
+   * 設定ファイル(model3.json)などのロード用
    *
-   * [不支持的项目]
-   * ・非ASCII字符，如日语
-   * ・e的指数表达式
+   * [未対応項目]
+   * ・日本語などの非ASCII文字
+   * ・eによる指数表現
    */
   export class CubismJson {
 
-
     /**
-     * 直接从字节数据加载并解析
+     * バイトデータから直接ロードしてパースする
      *
-     * @param buffer
-     * @param size
-     * @return CubismJson类的一个实例。 失败时为NULL
+     * @param buffer バッファ
+     * @param size バッファサイズ
+     * @return CubismJsonクラスのインスタンス。失敗したらNULL
      */
     public static create(buffer: ArrayBuffer, size: number) {
       const json = new CubismJson();
@@ -260,49 +261,49 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 释放已解析的JSON对象的处理
+     * パースしたJSONオブジェクトの解放処理
      *
-     * @param instance CubismJson类的实例
+     * @param instance CubismJsonクラスのインスタンス
      */
     public static delete(instance: CubismJson) {
-      instance = null as any;
+      instance = null;
     }
 
-    public _error: string;     // 解析错误
-    public _lineCount: number; // 用于错误报告的行数
-    public _root: Value;       // 解析的根元素
+    public _error: string; // パース時のエラー
+    public _lineCount: number; // エラー報告に用いる行数カウント
+    public _root: Value; // パースされたルート要素
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor(buffer?: ArrayBuffer, length?: number) {
-      this._error = null as any;
+      this._error = null;
       this._lineCount = 0;
-      this._root = null as any;
+      this._root = null;
 
       if (buffer != undefined) {
-        this.parseBytes(buffer, length as any);
+        this.parseBytes(buffer, length);
       }
     }
 
     /**
-     * 返回已解析的JSON的根元素
+     * パースしたJSONのルート要素を返す
      */
     public getRoot(): Value {
       return this._root;
     }
 
     /**
-     *  将Unicode二进制转换为String
+     *  UnicodeのバイナリをStringに変換
      *
-     * @param buffer 要转换的二进制数据
-     * @return 转换后的字符串
+     * @param buffer 変換するバイナリデータ
+     * @return 変換後の文字列
      */
     public arrayBufferToString(buffer: ArrayBuffer): string {
       const uint8Array: Uint8Array = new Uint8Array(buffer);
-      let str: string = '';
+      let str = '';
 
-      for (let i: number = 0, len: number = uint8Array.length; i < len; ++i) {
-        str += ('%' + this.pad(uint8Array[i].toString(16)));
+      for (let i = 0, len: number = uint8Array.length; i < len; ++i) {
+        str += '%' + this.pad(uint8Array[i].toString(16));
       }
 
       str = decodeURIComponent(str);
@@ -310,58 +311,64 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 执行JSON解析
-     * @param buffer    要解析的数据字节
-     * @param size      数据字节大小
+     * JSONのパースを実行する
+     * @param buffer    パース対象のデータバイト
+     * @param size      データバイトのサイズ
      * return true : 成功
      * return false: 失敗
      */
     public parseBytes(buffer: ArrayBuffer, size: number): boolean {
-      const endPos: number[] = new Array(1); // 要通过引用传递的数组
+      const endPos: number[] = new Array(1); // 参照渡しにするため配列
       const decodeBuffer: string = this.arrayBufferToString(buffer);
-      this._root = this.parseValue(decodeBuffer, size, 0, endPos) as any;
+      this._root = this.parseValue(decodeBuffer, size, 0, endPos);
+
       if (this._error) {
-        let strbuf: string = '\0';
+        let strbuf = '\0';
         strbuf = 'Json parse error : @line ' + (this._lineCount + 1) + '\n';
         this._root = new JsonString(strbuf);
 
         CubismLogInfo('{0}', this._root.getRawString());
         return false;
       } else if (this._root == null) {
-        this._root = new JsonError(new csmString(this._error), false); // 由于root已释放，因此请单独创建一个错误对象
+        this._root = new JsonError(new csmString(this._error), false); // rootは解放されるのでエラーオブジェクトを別途作成する
         return false;
       }
       return true;
     }
 
     /**
-     * 解析时返回错误值
+     * パース時のエラー値を返す
      */
     public getParseError(): string {
       return this._error;
     }
 
     /**
-     * 如果根元素后面的元素是文件的末尾，则返回true
+     * ルート要素の次の要素がファイルの終端だったらtrueを返す
      */
     public checkEndOfFile(): boolean {
       return this._root.getArray()[1].equals('EOF');
     }
 
     /**
-     * 从JSON元素解析值（float，String，Value *，Array，null，true，false）
-     * 根据元素格式在内部调用ParseString（），ParseObject（），ParseArray（）
+     * JSONエレメントからValue(float,String,Value*,Array,null,true,false)をパースする
+     * エレメントの書式に応じて内部でParseString(), ParseObject(), ParseArray()を呼ぶ
      *
-     * @param   buffer      JSON元素缓冲区
-     * @param   length      要解析的长度
-     * @param   begin       开始解析的位置
-     * @param   outEndPos   解析结束时的位置
-     * @return      从透视图获得的值对象
+     * @param   buffer      JSONエレメントのバッファ
+     * @param   length      パースする長さ
+     * @param   begin       パースを開始する位置
+     * @param   outEndPos   パース終了時の位置
+     * @return      パースから取得したValueオブジェクト
      */
-    protected parseValue(buffer: string, length: number, begin: number, outEndPos: number[]) {
+    protected parseValue(
+      buffer: string,
+      length: number,
+      begin: number,
+      outEndPos: number[],
+    ) {
       if (this._error) { return null; }
 
-      let o: Value = null as any;
+      let o: Value = null;
       let i: number = begin;
       let f: number;
 
@@ -380,28 +387,30 @@ export namespace Live2DCubismFramework {
           case '7':
           case '8':
           case '9': {
-            const afterString: string[] = new Array(1); // 通过引用传递
+            const afterString: string[] = new Array(1); // 参照渡しにするため
             f = strtod(buffer.slice(i), afterString);
             outEndPos[0] = buffer.indexOf(afterString[0]);
             return new JsonFloat(f);
           }
-          case '\"':
-            return new JsonString(this.parseString(buffer, length, i + 1, outEndPos)); // 从“\”之后的字符
+          case '"':
+            return new JsonString(
+              this.parseString(buffer, length, i + 1, outEndPos),
+            ); // \"の次の文字から
           case '[':
             o = this.parseArray(buffer, length, i + 1, outEndPos);
             return o;
           case '{':
             o = this.parseObject(buffer, length, i + 1, outEndPos);
             return o;
-          case 'n': // 不是null
+          case 'n': // null以外にない
             if (i + 3 < length) {
-              o = new JsonNullvalue();    // 能够释放
+              o = new JsonNullvalue(); // 解放できるようにする
               outEndPos[0] = i + 4;
             } else {
               this._error = 'parse null';
             }
             return o;
-          case 't': // 不是true
+          case 't': // true以外にない
             if (i + 3 < length) {
               o = JsonBoolean.trueValue;
               outEndPos[0] = i + 4;
@@ -409,7 +418,7 @@ export namespace Live2DCubismFramework {
               this._error = 'parse true';
             }
             return o;
-          case 'f': // 不是false
+          case 'f': // false以外にない
             if (i + 4 < length) {
               o = JsonBoolean.falseValue;
               outEndPos[0] = i + 5;
@@ -420,8 +429,8 @@ export namespace Live2DCubismFramework {
           case ',': // Array separator
             this._error = 'illegal \',\' position';
             return null;
-          case ']': // 非法}但跳过。 数组的末尾似乎没有必要
-            outEndPos[0] = i;  // 重新处理相同的字符
+          case ']': // 不正な｝だがスキップする。配列の最後に不要な , があると思われる
+            outEndPos[0] = i; // 同じ文字を再処理
             return null;
           case '\n':
             this._lineCount++;
@@ -429,6 +438,7 @@ export namespace Live2DCubismFramework {
           case '\t':
           case '\r':
           default:
+            // スキップ
             break;
         }
       }
@@ -438,38 +448,45 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 将字符串解析为下一个「"」
+     * 次の「"」までの文字列をパースする。
      *
-     * @param   string  ->  要解析的字符串
-     * @param   length  ->  要解析的长度
-     * @param   begin   ->  开始解析的位置
-     * @param  outEndPos   ->  解析结束时的位置
-     * @return      解析句子F字符串元素
+     * @param   string  ->  パース対象の文字列
+     * @param   length  ->  パースする長さ
+     * @param   begin   ->  パースを開始する位置
+     * @param  outEndPos   ->  パース終了時の位置
+     * @return      パースした文F字列要素
      */
-    protected parseString(string: string, length: number, begin: number, outEndPos: number[]): string {
-      if (this._error) { return null as any; }
+    protected parseString(
+      string: string,
+      length: number,
+      begin: number,
+      outEndPos: number[],
+    ): string {
+      if (this._error) { return null; }
 
       let i = begin;
       let c: string, c2: string;
       const ret: csmString = new csmString('');
-      let bufStart: number = begin; // 未在sbuf中注册的角色的起始位置
+      let bufStart: number = begin; // sbufに登録されていない文字の開始位置
 
       for (; i < length; i++) {
         c = string[i];
 
         switch (c) {
-          case '\"': {
-            outEndPos[0] = i + 1;  // "之后的下一个角色
-            ret.append(string.slice(bufStart), (i - bufStart)); // 注册前一个字符
+          case '"': {
+            // 終端の”、エスケープ文字は別に処理されるのでここに来ない
+            outEndPos[0] = i + 1; // ”の次の文字
+            ret.append(string.slice(bufStart), i - bufStart); // 前の文字までを登録する
             return ret.s;
           }
           case '//': {
-            i++; // 处理两个字符作为一组
+            // エスケープの場合
+            i++; // ２文字をセットで扱う
 
             if (i - 1 > bufStart) {
-              ret.append(string.slice(bufStart), (i - bufStart)); // 注册前一个字符
+              ret.append(string.slice(bufStart), i - bufStart); // 前の文字までを登録する
             }
-            bufStart = i + 1; // 从逃脱后的角色（2个字符
+            bufStart = i + 1; // エスケープ（２文字)の次の文字から
 
             if (i < length) {
               c2 = string[i];
@@ -478,8 +495,8 @@ export namespace Live2DCubismFramework {
                 case '\\':
                   ret.expansion(1, '\\');
                   break;
-                case '\"':
-                  ret.expansion(1, '\"');
+                case '"':
+                  ret.expansion(1, '"');
                   break;
                 case '/':
                   ret.expansion(1, '/');
@@ -509,19 +526,18 @@ export namespace Live2DCubismFramework {
               this._error = 'parse string/escape error';
             }
           }
-          default:
-            {
-              break;
-            }
+          default: {
+            break;
+          }
         }
       }
 
       this._error = 'parse string/illegal end';
-      return null as any;
+      return null;
     }
 
     /**
-     * 解析JSON对象元素并返回Value对象
+     * JSONのオブジェクトエレメントをパースしてValueオブジェクトを返す
      *
      * @param buffer    JSONエレメントのバッファ
      * @param length    パースする長さ
@@ -529,16 +545,21 @@ export namespace Live2DCubismFramework {
      * @param outEndPos パース終了時の位置
      * @return パースから取得したValueオブジェクト
      */
-    protected parseObject(buffer: string, length: number, begin: number, outEndPos: number[]): Value {
-      if (this._error) { return null as any; }
+    protected parseObject(
+      buffer: string,
+      length: number,
+      begin: number,
+      outEndPos: number[],
+    ): Value {
+      if (this._error) { return null; }
       const ret: JsonMap = new JsonMap();
 
       // Key: Value
-      let key: string = '';
+      let key = '';
       let i: number = begin;
-      let c: string = '';
+      let c = '';
       const localRetEndPos2: number[] = Array(1);
-      let ok: boolean = false;
+      let ok = false;
 
       // , が続く限りループ
       for (; i < length; i++) {
@@ -546,10 +567,10 @@ export namespace Live2DCubismFramework {
           c = buffer[i];
 
           switch (c) {
-            case '\"':
+            case '"':
               key = this.parseString(buffer, length, i + 1, localRetEndPos2);
               if (this._error) {
-                return null as any;
+                return null;
               }
 
               i = localRetEndPos2[0];
@@ -564,12 +585,12 @@ export namespace Live2DCubismFramework {
             case '\n':
               this._lineCount++;
             default:
-              break;  // スキップする文字
+              break; // スキップする文字
           }
         }
         if (!ok) {
           this._error = 'key not found';
-          return null as any;
+          return null;
         }
 
         ok = false;
@@ -586,22 +607,28 @@ export namespace Live2DCubismFramework {
             case '}':
               this._error = 'illegal \'}\' position';
               break;
-            case '\n': this._lineCount++;
+            case '\n':
+              this._lineCount++;
             // case ' ': case '\t' : case '\r':
             default:
-              break;  // スキップする文字
+              break; // スキップする文字
           }
         }
 
         if (!ok) {
           this._error = '\':\' not found';
-          return null as any;
+          return null;
         }
 
         // 値をチェック
-        const value: Value = this.parseValue(buffer, length, i, localRetEndPos2) as any;
+        const value: Value = this.parseValue(
+          buffer,
+          length,
+          i,
+          localRetEndPos2,
+        );
         if (this._error) {
-          return null as any;
+          return null;
         }
 
         i = localRetEndPos2[0];
@@ -621,25 +648,30 @@ export namespace Live2DCubismFramework {
             case '\n':
               this._lineCount++;
             default:
-              break;  // スキップ
+              break; // スキップ
           }
         }
       }
 
       this._error = 'illegal end of perseObject';
-      return null as any;
+      return null;
     }
 
     /**
-     * 将字符串解析为下一个「"」
+     * 次の「"」までの文字列をパースする。
      * @param buffer    JSONエレメントのバッファ
      * @param length    パースする長さ
      * @param begin     パースを開始する位置
      * @param outEndPos パース終了時の位置
      * @return パースから取得したValueオブジェクト
      */
-    protected parseArray(buffer: string, length: number, begin: number, outEndPos: number[]): Value {
-      if (this._error) { return null as any; }
+    protected parseArray(
+      buffer: string,
+      length: number,
+      begin: number,
+      outEndPos: number[],
+    ): Value {
+      if (this._error) { return null; }
       let ret: JsonArray = new JsonArray();
 
       // key : value
@@ -650,10 +682,15 @@ export namespace Live2DCubismFramework {
       // , が続く限りループ
       for (; i < length; i++) {
         // : をチェック
-        const value: Value = this.parseValue(buffer, length, i, localRetEndpos2) as any;
+        const value: Value = this.parseValue(
+          buffer,
+          length,
+          i,
+          localRetEndpos2,
+        );
 
         if (this._error) {
-          return null as any;
+          return null;
         }
         i = localRetEndpos2[0];
 
@@ -683,29 +720,27 @@ export namespace Live2DCubismFramework {
         }
       }
 
-      ret = void 0 as any;
+      ret = void 0;
       this._error = 'illegal end of parseObject';
-      return null as any;
+      return null;
     }
 
     /**
-     * 编码，填充
+     * エンコード、パディング
      */
     private pad(n: string): string {
-      return n.length < 2
-        ? '0' + n
-        : n;
+      return n.length < 2 ? '0' + n : n;
     }
   }
 
   /**
-   * 将解析的JSON元素视为浮点值
+   * パースしたJSONの要素をfloat値として扱う
    */
   export class JsonFloat extends Value {
 
-    private _value: number; // JSON元素值
+    private _value: number; // JSON要素の値
     /**
-     * 构造函数
+     * コンストラクタ
      */
     constructor(v: number) {
       super();
@@ -714,17 +749,17 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 如果值类型是数字，则为True
+     * Valueの種類が数値型ならtrue
      */
     public isFloat(): boolean {
       return true;
     }
 
     /**
-     * 以字符串形式返回元素（csmString类型）
+     * 要素を文字列で返す(csmString型)
      */
     public getString(defaultValue: string, indent: string): string {
-      const strbuf: string = '\0';
+      const strbuf = '\0';
       this._value = parseFloat(strbuf);
       this._stringBuffer = strbuf;
 
@@ -732,28 +767,28 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 以数字类型（number）返回元素
+     * 要素を数値型で返す(number)
      */
-    public toInt(defaultValue: number = 0): number {
+    public toInt(defaultValue = 0): number {
       return parseInt(this._value.toString());
     }
 
     /**
-     * 以数字类型（number）返回元素
+     * 要素を数値型で返す(number)
      */
-    public toFloat(defaultValue: number = 0.0): number {
+    public toFloat(defaultValue = 0.0): number {
       return this._value;
     }
 
     /**
-     * 如果参数的值相等，则为True
+     * 引数の値と等しければtrue
      */
     public equals(value: csmString): boolean;
     public equals(value: string): boolean;
     public equals(value: number): boolean;
     public equals(value: boolean): boolean;
     public equals(value: any): boolean {
-      if ('number' === typeof (value)) {
+      if ('number' === typeof value) {
         // int
         if (Math.round(value)) {
           return false;
@@ -766,11 +801,11 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 将解析的JSON元素视为布尔值
+   * パースしたJSONの要素を真偽値として扱う
    */
   export class JsonBoolean extends Value {
 
-    public static trueValue: JsonBoolean;  // true
+    public static trueValue: JsonBoolean; // true
     public static falseValue: JsonBoolean; // false
 
     private _boolValue: boolean; // JSON要素の値
@@ -783,7 +818,6 @@ export namespace Live2DCubismFramework {
 
       this._boolValue = v;
     }
-
     /**
      * Valueの種類が真偽値ならtrue
      */
@@ -794,7 +828,7 @@ export namespace Live2DCubismFramework {
     /**
      * 要素を真偽値で返す(boolean)
      */
-    public toBoolean(defaultValue: boolean = false): boolean {
+    public toBoolean(defaultValue = false): boolean {
       return this._boolValue;
     }
 
@@ -802,9 +836,7 @@ export namespace Live2DCubismFramework {
      * 要素を文字列で返す(csmString型)
      */
     public getString(defaultValue: string, indent: string): string {
-      this._stringBuffer = this._boolValue
-        ? 'true'
-        : 'false';
+      this._stringBuffer = this._boolValue ? 'true' : 'false';
 
       return this._stringBuffer;
     }
@@ -817,7 +849,7 @@ export namespace Live2DCubismFramework {
     public equals(value: number): boolean;
     public equals(value: boolean): boolean;
     public equals(value: any): boolean {
-      if ('boolean' === typeof (value)) {
+      if ('boolean' === typeof value) {
         return value == this._boolValue;
       }
       return false;
@@ -832,18 +864,18 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 将解析的JSON元素视为字符串
+   * パースしたJSONの要素を文字列として扱う
    */
   export class JsonString extends Value {
     /**
      * 引数付きコンストラクタ
      */
     public constructor(s: string);
-    public constructor(s: csmString)
+    public constructor(s: csmString);
     public constructor(s: any) {
       super();
 
-      if ('string' === typeof (s)) {
+      if ('string' === typeof s) {
         this._stringBuffer = s;
       }
 
@@ -874,12 +906,12 @@ export namespace Live2DCubismFramework {
     public equals(value: number): boolean;
     public equals(value: boolean): boolean;
     public equals(value: any): boolean {
-      if ('string' === typeof (value)) {
+      if ('string' === typeof value) {
         return this._stringBuffer == value;
       }
 
       if (value instanceof csmString) {
-        return (this._stringBuffer == value.s);
+        return this._stringBuffer == value.s;
       }
 
       return false;
@@ -887,10 +919,9 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * JSON解析期间的错误结果。 像字符串类型一样
+   * JSONパース時のエラー結果。文字列型のようにふるまう
    */
   export class JsonError extends JsonString {
-
 
     protected _isStatic: boolean; // 静的なValueかどうか
 
@@ -898,7 +929,7 @@ export namespace Live2DCubismFramework {
      * 引数付きコンストラクタ
      */
     public constructor(s: csmString | string, isStatic: boolean) {
-      if ('string' === typeof (s)) {
+      if ('string' === typeof s) {
         super(s);
       } else {
         super(s);
@@ -929,7 +960,7 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 将解析的JSON元素作为空值
+   * パースしたJSONの要素をNULL値として持つ
    */
   export class JsonNullvalue extends Value {
 
@@ -961,11 +992,10 @@ export namespace Live2DCubismFramework {
     public isStatic(): boolean {
       return true;
     }
-
   }
 
   /**
-   * 将解析后的JSON元素作为array
+   * パースしたJSONの要素を配列として持つ
    */
   export class JsonArray extends Value {
 
@@ -982,12 +1012,16 @@ export namespace Live2DCubismFramework {
      * デストラクタ相当の処理
      */
     public release(): void {
-      for (const ite: csmVector_iterator<Value> = this._array.begin(); ite.notEqual(this._array.end()); ite.preIncrement()) {
+      for (
+        let ite: csmVector_iterator<Value> = this._array.begin();
+        ite.notEqual(this._array.end());
+        ite.preIncrement()
+      ) {
         let v: Value = ite.ptr();
 
         if (v && !v.isStatic()) {
-          v = void 0 as any;
-          v = null as any;
+          v = void 0;
+          v = null;
         }
       }
     }
@@ -1004,7 +1038,9 @@ export namespace Live2DCubismFramework {
      */
     public getValueByIndex(index: number): Value {
       if (index < 0 || this._array.getSize() <= index) {
-        return Value.errorValue.setErrorNotForClientCall(CSM_JSON_ERROR_INDEX_OF_BOUNDS);
+        return Value.errorValue.setErrorNotForClientCall(
+          CSM_JSON_ERROR_INDEX_OF_BOUNDS,
+        );
       }
 
       const v: Value = this._array.at(index);
@@ -1020,7 +1056,9 @@ export namespace Live2DCubismFramework {
      * 添字演算子[string | csmString]
      */
     public getValueByString(s: string | csmString): Value {
-      return Value.errorValue.setErrorNotForClientCall(CSM_JSON_ERROR_TYPE_MISMATCH);
+      return Value.errorValue.setErrorNotForClientCall(
+        CSM_JSON_ERROR_TYPE_MISMATCH,
+      );
     }
 
     /**
@@ -1029,7 +1067,11 @@ export namespace Live2DCubismFramework {
     public getString(defaultValue: string, indent: string): string {
       const stringBuffer: string = indent + '[\n';
 
-      for (const ite: csmVector_iterator<Value> = this._array.begin(); ite.notEqual(this._array.end()); ite.increment()) {
+      for (
+        let ite: csmVector_iterator<Value> = this._array.begin();
+        ite.notEqual(this._array.end());
+        ite.increment()
+      ) {
         const v: Value = ite.ptr();
         this._stringBuffer += indent + '' + v.getString(indent + ' ') + '\n';
       }
@@ -1050,7 +1092,7 @@ export namespace Live2DCubismFramework {
     /**
      * 要素をコンテナで返す(csmVector<Value>)
      */
-    public getVector(defaultValue: csmVector<Value> = null as any): csmVector<Value> {
+    public getVector(defaultValue: csmVector<Value> = null): csmVector<Value> {
       return this._array;
     }
 
@@ -1063,13 +1105,12 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 将解析后的JSON元素作为map
+   * パースしたJSONの要素をマップとして持つ
    */
   export class JsonMap extends Value {
 
-
-    private _map: csmMap<string, Value>;   // JSON要素の値
-    private _keys: csmVector<string> = undefined as any;               // JSON要素の値
+    private _map: csmMap<string, Value>; // JSON要素の値
+    private _keys: csmVector<string>; // JSON要素の値
     /**
      * コンストラクタ
      */
@@ -1088,8 +1129,8 @@ export namespace Live2DCubismFramework {
         let v: Value = ite.ptr().second;
 
         if (v && !v.isStatic()) {
-          v = void 0 as any;
-          v = null as any;
+          v = void 0;
+          v = null;
         }
 
         ite.preIncrement();
@@ -1115,7 +1156,11 @@ export namespace Live2DCubismFramework {
         return ret;
       }
 
-      for (const iter: csmMap_iterator<string, Value> = this._map.begin(); iter.notEqual(this._map.end()); iter.preIncrement()) {
+      for (
+        let iter: csmMap_iterator<string, Value> = this._map.begin();
+        iter.notEqual(this._map.end());
+        iter.preIncrement()
+      ) {
         if (iter.ptr().first == s) {
           if (iter.ptr().second == null) {
             return Value.nullValue;
@@ -1131,7 +1176,9 @@ export namespace Live2DCubismFramework {
      * 添字演算子[index]
      */
     public getValueByIndex(index: number): Value {
-      return Value.errorValue.setErrorNotForClientCall(CSM_JSON_ERROR_TYPE_MISMATCH);
+      return Value.errorValue.setErrorNotForClientCall(
+        CSM_JSON_ERROR_TYPE_MISMATCH,
+      );
     }
 
     /**
@@ -1145,7 +1192,8 @@ export namespace Live2DCubismFramework {
         const key = ite.ptr().first;
         const v: Value = ite.ptr().second;
 
-        this._stringBuffer += indent + ' ' + key + ' : ' + v.getString(indent + '   ') + ' \n';
+        this._stringBuffer +=
+          indent + ' ' + key + ' : ' + v.getString(indent + '   ') + ' \n';
         ite.preIncrement();
       }
 

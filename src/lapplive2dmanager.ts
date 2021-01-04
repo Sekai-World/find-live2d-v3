@@ -1,9 +1,9 @@
 /*
-* Copyright(c) Live2D Inc. All rights reserved.
-*
-* Use of this source code is governed by the Live2D Open Software license
-* that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
-*/
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Open Software license
+ * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ */
 
 import { Live2DCubismFramework as cubismmatrix44 } from './framework/math/cubismmatrix44';
 import { Live2DCubismFramework as csmvector } from './framework/type/csmvector';
@@ -15,7 +15,6 @@ import { LAppModel } from './lappmodel';
 import { LAppDefine } from './lappdefine';
 import { LAppPal } from './lapppal';
 import { canvas, LAppDelegate } from './lappdelegate';
-
 
 export let s_instance: LAppLive2DManager = null as any;
 
@@ -49,8 +48,8 @@ export class LAppLive2DManager {
     s_instance = null as any;
   }
 
-  public _viewMatrix: Csm_CubismMatrix44;    // 用于模型绘制的视图矩阵
-  public _models: Csm_csmVector<LAppModel>;  // 模型实例容器
+  public _viewMatrix: Csm_CubismMatrix44; // 用于模型绘制的视图矩阵
+  public _models: Csm_csmVector<LAppModel>; // 模型实例容器
   public _userModels: LAppModel[]; // 外部使用的model数组
   public delegate: LAppDelegate;
 
@@ -64,8 +63,14 @@ export class LAppLive2DManager {
     this.delegate = LAppDelegate.getInstance();
   }
 
-  public initDelegate(renderConfig?: { efficient: boolean, fps?: number }): boolean {
-    if (this.delegate.initialize() == false) {
+  public initDelegate(
+    renderConfig?: { efficient: boolean; fps?: number },
+    el?: {
+      wrap: HTMLDivElement;
+      canvas: HTMLCanvasElement;
+    },
+  ): boolean {
+    if (this.delegate.initialize(el) == false) {
       return false;
     }
     this.delegate.startRender(renderConfig);
@@ -79,7 +84,10 @@ export class LAppLive2DManager {
    * @return 返回模型的实例。 如果索引值超出范围，则返回NULL。
    */
   public getModel(nameOrIndex: string | number): LAppModel {
-    if (typeof (nameOrIndex) === 'number' && nameOrIndex < this._models.getSize()) {
+    if (
+      typeof nameOrIndex === 'number' &&
+      nameOrIndex < this._models.getSize()
+    ) {
       return this._models.at(nameOrIndex);
     } else {
       for (let i: number = 0; i < this._models.getSize(); i++) {
@@ -115,7 +123,11 @@ export class LAppLive2DManager {
         reject('model [' + modelName + '] not found');
         return;
       }
-      for (let ite: iterator<LAppModel> = this._models.begin(); ite.notEqual(this._models.end());) {
+      for (
+        let ite: iterator<LAppModel> = this._models.begin();
+        ite.notEqual(this._models.end());
+
+      ) {
         if (ite.ptr()._modelName === modelName) {
           ite.ptr().release();
           ite = this._models.erase(ite);
@@ -150,7 +162,11 @@ export class LAppLive2DManager {
    */
   public onTap(x: number, y: number): void {
     if (LAppDefine.DebugLogEnable) {
-      LAppPal.printLog('[APP]tap point: {x: {0} y: {1}}', x.toFixed(2), y.toFixed(2));
+      LAppPal.printLog(
+        '[APP]tap point: {x: {0} y: {1}}',
+        x.toFixed(2),
+        y.toFixed(2),
+      );
     }
 
     for (let i: number = 0; i < this._models.getSize(); i++) {
@@ -158,12 +174,22 @@ export class LAppLive2DManager {
         if (LAppDefine.DebugLogEnable) {
           LAppPal.printLog('[APP]hit area: [{0}]', LAppDefine.HitAreaNameNose);
         }
-        this._models.at(i).startRandomMotion(LAppDefine.MotionGroupTapNose, LAppDefine.PriorityNormal);
+        this._models
+          .at(i)
+          .startRandomMotion(
+            LAppDefine.MotionGroupTapNose,
+            LAppDefine.PriorityNormal,
+          );
       } else if (this._models.at(i).hitTest(LAppDefine.HitAreaNameGem, x, y)) {
         if (LAppDefine.DebugLogEnable) {
           LAppPal.printLog('[APP]hit area: [{0}]', LAppDefine.HitAreaNameGem);
         }
-        this._models.at(i).startRandomMotion(LAppDefine.MotionGroupTapGem, LAppDefine.PriorityNormal);
+        this._models
+          .at(i)
+          .startRandomMotion(
+            LAppDefine.MotionGroupTapGem,
+            LAppDefine.PriorityNormal,
+          );
       } else if (this._models.at(i).hitTest(LAppDefine.HitAreaNameHead, x, y)) {
         if (LAppDefine.DebugLogEnable) {
           LAppPal.printLog('[APP]hit area: [{0}]', LAppDefine.HitAreaNameHead);
@@ -173,7 +199,12 @@ export class LAppLive2DManager {
         if (LAppDefine.DebugLogEnable) {
           LAppPal.printLog('[APP]hit area: [{0}]', LAppDefine.HitAreaNameBody);
         }
-        this._models.at(i).startRandomMotion(LAppDefine.MotionGroupTapBody, LAppDefine.PriorityNormal);
+        this._models
+          .at(i)
+          .startRandomMotion(
+            LAppDefine.MotionGroupTapBody,
+            LAppDefine.PriorityNormal,
+          );
       }
     }
   }
@@ -204,7 +235,18 @@ export class LAppLive2DManager {
    * 切换场景
    * 在示例应用程序中，切换模型集。
    */
-  public addModel(resource: { path: string, fileName: string, modelName: string, modelSize: number, textures: string[] }, batchLoad?: boolean): Promise<LAppModel | null> {
+  public addModel(
+    resource: {
+      path: string;
+      fileName: string;
+      modelName: string;
+      modelSize: number;
+      textures?: string[];
+      motions?: Array<{ name: string; url: string }>;
+      expressions?: Array<{ name: string; url: string }>;
+    },
+    batchLoad?: boolean,
+  ): Promise<LAppModel | null> {
     return new Promise((resolve) => {
       if (LAppDefine.DebugLogEnable) {
         LAppPal.printLog('[APP]model {0}', resource.modelName);
@@ -218,12 +260,26 @@ export class LAppLive2DManager {
       }
       let newModel = new LAppModel(resource, this.delegate);
       this._models.pushBack(newModel);
-      newModel._batchLoad = (typeof (batchLoad) === 'boolean') ? batchLoad : false;
-      newModel.loadAssets(resource.path, modelFileName, resource.modelName, resource.textures).then(() => {
-        resolve(newModel);
-      }).catch(() => {
-        resolve(null);
-      });
+      newModel._batchLoad = typeof batchLoad === 'boolean' ? batchLoad : false;
+      newModel
+        .loadAssets(
+          resource.path,
+          modelFileName,
+          resource.modelName,
+          resource.textures,
+        )
+        .then(() => {
+          return newModel.addMotions(resource.motions);
+        })
+        .then(() => {
+          return newModel.addExpressions(resource.expressions);
+        })
+        .then(() => {
+          resolve(newModel);
+        })
+        .catch(() => {
+          resolve(null);
+        });
     });
   }
 

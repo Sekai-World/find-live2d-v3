@@ -1,8 +1,8 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 import { Live2DCubismFramework as cubismid } from '../id/cubismid';
@@ -14,86 +14,81 @@ import CubismIdHandle = cubismid.CubismIdHandle;
 
 export namespace Live2DCubismFramework {
   /**
-   * @brief 运动曲线类型
+   * @brief モーションカーブの種類
    *
-* 运动曲线类型。
+   * モーションカーブの種類。
    */
   export enum CubismMotionCurveTarget {
-    CubismMotionCurveTarget_Model,          // 对于模型
-    CubismMotionCurveTarget_Parameter,      // 对于参数
-    CubismMotionCurveTarget_PartOpacity,     // 防止零件的不透明度
+    CubismMotionCurveTarget_Model, // モデルに対して
+    CubismMotionCurveTarget_Parameter, // パラメータに対して
+    CubismMotionCurveTarget_PartOpacity, // パーツの不透明度に対して
   }
 
-
   /**
-   * @brief 运动曲线段类型
+   * @brief モーションカーブのセグメントの種類
    *
-   * 运动曲线段类型。
+   * モーションカーブのセグメントの種類。
    */
   export enum CubismMotionSegmentType {
-    CubismMotionSegmentType_Linear = 0,         // 线性
-    CubismMotionSegmentType_Bezier = 1,         // 贝齐尔曲线
-    CubismMotionSegmentType_Stepped = 2,        // 步
-    CubismMotionSegmentType_InverseStepped = 3,  // 反向步骤
+    CubismMotionSegmentType_Linear = 0, // リニア
+    CubismMotionSegmentType_Bezier = 1, // ベジェ曲線
+    CubismMotionSegmentType_Stepped = 2, // ステップ
+    CubismMotionSegmentType_InverseStepped = 3, // インバースステップ
   }
 
   /**
-   * @brief 运动曲线控制点
+   * @brief モーションカーブの制御点
    *
-   * 运动曲线控制点。
+   * モーションカーブの制御点。
    */
   export class CubismMotionPoint {
-    public time: number = 0.0;         // 時間[秒]
-    public value: number = 0.0;        // 値
+    public time = 0.0; // 時間[秒]
+    public value = 0.0; // 値
   }
 
-
   /**
-   * 运动曲线段评估功能
+   * モーションカーブのセグメントの評価関数
    *
-   * @param   points      运动曲线控制点列表
-   * @param   time        评估时间[秒]
+   * @param   points      モーションカーブの制御点リスト
+   * @param   time        評価する時間[秒]
    */
-  export type csmMotionSegmentEvaluationFunction = (
-    points: CubismMotionPoint[],
-    time: number,
-  ) => number;
+  export type csmMotionSegmentEvaluationFunction = (points: CubismMotionPoint[], time: number) => number;
 
   /**
-   * @brief 运动曲线段
+   * @brief モーションカーブのセグメント
    *
-   * 运动曲线段
+   * モーションカーブのセグメント。
    */
   export class CubismMotionSegment {
 
-    public evaluate: csmMotionSegmentEvaluationFunction;   // 评估功能使用
-    public basePointIndex: number;     // 第一段的索引
-    public segmentType: number;    // 细分类型
+    public evaluate: csmMotionSegmentEvaluationFunction; // 使用する評価関数
+    public basePointIndex: number; // 最初のセグメントへのインデックス
+    public segmentType: number; // セグメントの種類
     /**
-     * @brief 构造函数
+     * @brief コンストラクタ
      *
-     * 构造函数。
+     * コンストラクタ。
      */
     public constructor() {
-      this.evaluate = null as any;
+      this.evaluate = null;
       this.basePointIndex = 0;
       this.segmentType = 0;
     }
   }
 
   /**
-   * @brief 运动曲线
+   * @brief モーションカーブ
    *
-   * 运动曲线。
+   * モーションカーブ。
    */
   export class CubismMotionCurve {
 
-    public type: CubismMotionCurveTarget;               // 曲线类型
-    public id: CubismIdHandle = undefined as any;       // 曲线的ID
-    public segmentCount: number;                      // 细分数量
-    public baseSegmentIndex: number;                  // 第一段指数
-    public fadeInTime: number;                      // 淡入时间[秒]
-    public fadeOutTime: number;                     // 时间淡出[秒]
+    public type: CubismMotionCurveTarget; // カーブの種類
+    public id: CubismIdHandle; // カーブのID
+    public segmentCount: number; // セグメントの個数
+    public baseSegmentIndex: number; // 最初のセグメントのインデックス
+    public fadeInTime: number; // フェードインにかかる時間[秒]
+    public fadeOutTime: number; // フェードアウトにかかる時間[秒]
     public constructor() {
       this.type = CubismMotionCurveTarget.CubismMotionCurveTarget_Model;
       this.segmentCount = 0;
@@ -104,29 +99,29 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-  * 事件。
-  */
+   * イベント。
+   */
   export class CubismMotionEvent {
-    public fireTime: number = 0.0;
-    public value: csmString = undefined as any;
+    public fireTime = 0.0;
+    public value: csmString;
   }
 
   /**
-   * @brief 动作数据
+   * @brief モーションデータ
    *
-   * 动作数据。
+   * モーションデータ。
    */
   export class CubismMotionData {
 
-    public duration: number;                                   // 动作长度[秒]
-    public loop: boolean;                                      // 是否循环
-    public curveCount: number;                                 // 曲线数量
-    public eventCount: number;                                 // UserData的数量
-    public fps: number;                                        // 帧率
-    public curves: csmVector<CubismMotionCurve>;               // 曲线列表
-    public segments: csmVector<CubismMotionSegment>;           // 细分列表
-    public points: csmVector<CubismMotionPoint>;               // 积分清单
-    public events: csmVector<CubismMotionEvent>;               // 事件清单
+    public duration: number; // モーションの長さ[秒]
+    public loop: boolean; // ループするかどうか
+    public curveCount: number; // カーブの個数
+    public eventCount: number; // UserDataの個数
+    public fps: number; // フレームレート
+    public curves: csmVector<CubismMotionCurve>; // カーブのリスト
+    public segments: csmVector<CubismMotionSegment>; // セグメントのリスト
+    public points: csmVector<CubismMotionPoint>; // ポイントのリスト
+    public events: csmVector<CubismMotionEvent>; // イベントのリスト
     public constructor() {
       this.duration = 0.0;
       this.loop = false;

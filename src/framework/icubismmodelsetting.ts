@@ -1,8 +1,8 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 import { Live2DCubismFramework as cubismid } from './id/cubismid';
@@ -12,179 +12,187 @@ import CubismIdHandle = cubismid.CubismIdHandle;
 
 export namespace Live2DCubismFramework {
   /**
-   * 一个纯虚拟类，用于声明处理模型设置信息的函数。
+   * モデル設定情報を取り扱う関数を宣言した純粋仮想クラス。
    *
-   * 通过继承此类，它将成为处理模型设置信息的类。
+   * このクラスを継承することで、モデル設定情報を取り扱うクラスになる。
    */
   export abstract class ICubismModelSetting {
     /**
-     * 获取Moc文件的名称
-     * @return Moc文件的名称
+     * Mocファイルの名前を取得する
+     * @return Mocファイルの名前
      */
     public abstract getModelFileName(): string;
 
     /**
-     * 获取模型使用的纹理数
-     * 纹理数量
+     * モデルが使用するテクスチャの数を取得する
+     * テクスチャの数
      */
     public abstract getTextureCount(): number;
 
     /**
-     * 获取纹理所在目录的名称
-     * @return 纹理所在目录的名称
+     * テクスチャが配置されたディレクトリの名前を取得する
+     * @return テクスチャが配置されたディレクトリの名前
      */
     public abstract getTextureDirectory(): string;
 
     /**
-     * 获取模型使用的纹理的名称
-     * @param index 数组索引值
-     * @return 纹理的名称
+     * モデルが使用するテクスチャの名前を取得する
+     * @param index 配列のインデックス値
+     * @return テクスチャの名前
      */
     public abstract getTextureFileName(index: number): string;
 
     /**
-     * 获取为模型设置的命中判断次数
-     * @return 为模型设置的命中判断数
+     * モデルに設定された当たり判定の数を取得する
+     * @return モデルに設定された当たり判定の数
      */
     public abstract getHitAreasCount(): number;
 
     /**
-     * 获取为命中判断设置的ID
+     * 当たり判定に設定されたIDを取得する
      *
-     * @param index 数组索引值
-     * @return 为命中判断设置的ID
+     * @param index 配列のindex
+     * @return 当たり判定に設定されたID
      */
     public abstract getHitAreaId(index: number): CubismIdHandle;
 
     /**
-     * 获取为命中判断设置的名称
-     * @param index 数组索引值
-     * @return 命中判断设置的名称
+     * 当たり判定に設定された名前を取得する
+     * @param index 配列のインデックス値
+     * @return 当たり判定に設定された名前
      */
     public abstract getHitAreaName(index: number): string;
 
     /**
-     * 获取物理计算设置文件的名称
-     * @return 物理计算设置文件的名称
+     * 物理演算設定ファイルの名前を取得する
+     * @return 物理演算設定ファイルの名前
      */
     public abstract getPhysicsFileName(): string;
 
     /**
-     * 获取部件切换设置文件的名称
-     * @return 部件切换设置文件的名称
+     * パーツ切り替え設定ファイルの名前を取得する
+     * @return パーツ切り替え設定ファイルの名前
      */
     public abstract getPoseFileName(): string;
 
     /**
-     * 获取面部表情设置文件的数量
-     * @return 面部表情设置文件的数量
+     * 表情設定ファイルの数を取得する
+     * @return 表情設定ファイルの数
      */
     public abstract getExpressionCount(): number;
 
     /**
-     * 获取标识面部表情设置文件的名称（别名）
-     * @param index 数组索引值
-     * @return 面部表情名称
+     * 表情設定ファイルを識別する名前（別名）を取得する
+     * @param index 配列のインデックス値
+     * @return 表情の名前
      */
     public abstract getExpressionName(index: number): string;
 
     /**
-     * 获取面部表情设置文件的名称
-     * @param index 数组索引值
-     * @return 面部表情设置文件的名称
+     * 表情設定ファイルの名前を取得する
+     * @param index 配列のインデックス値
+     * @return 表情設定ファイルの名前
      */
     public abstract getExpressionFileName(index: number): string;
 
     /**
-     * 获取运动组的数量
-     * @return 运动组数量
+     * モーショングループの数を取得する
+     * @return モーショングループの数
      */
     public abstract getMotionGroupCount(): number;
 
     /**
-     * 获取运动组的名称
-     * @param index 数组索引值
-     * @return 运动组的名称
+     * モーショングループの名前を取得する
+     * @param index 配列のインデックス値
+     * @return モーショングループの名前
      */
     public abstract getMotionGroupName(index: number): string;
 
     /**
-     * 获取运动组中的运动次数
-     * @param groupName 运动组的名称
-     * @return 运动组数量
+     * モーショングループに含まれるモーションの数を取得する
+     * @param groupName モーショングループの名前
+     * @return モーショングループの数
      */
     public abstract getMotionCount(groupName: string): number;
 
     /**
-     * 从组名和索引值中获取动作文件名
-     * @param groupName 运动组的名称
-     * @param index     数组索引值
-     * @return 动画文件的名称
+     * グループ名とインデックス値からモーションファイル名を取得する
+     * @param groupName モーショングループの名前
+     * @param index     配列のインデックス値
+     * @return モーションファイルの名前
      */
     public abstract getMotionFileName(groupName: string, index: number): string;
 
     /**
-     * 获取与动作对应的声音文件的名称
-     * @param groupName 运动组的名称
-     * @param index 数组索引值
-     * @return 声音文件的名称
+     * モーションに対応するサウンドファイルの名前を取得する
+     * @param groupName モーショングループの名前
+     * @param index 配列のインデックス値
+     * @return サウンドファイルの名前
      */
-    public abstract getMotionSoundFileName(groupName: string, index: number): string;
+    public abstract getMotionSoundFileName(
+      groupName: string,
+      index: number,
+    ): string;
 
     /**
-     * 在动作开始时获得淡入处理时间
-     * @param groupName 运动组的名称
-     * @param index 数组索引值
-     * @return 淡入处理时间[秒]
+     * モーション開始時のフェードイン処理時間を取得する
+     * @param groupName モーショングループの名前
+     * @param index 配列のインデックス値
+     * @return フェードイン処理時間[秒]
      */
-    public abstract getMotionFadeInTimeValue(groupName: string, index: number): number;
+    public abstract getMotionFadeInTimeValue(
+      groupName: string,
+      index: number,
+    ): number;
 
     /**
-     * 在运动结束时获得淡出处理时间
-     * @param groupName 运动组的名称
-     * @param index 数组索引值
-     * @return 淡出处理时间[秒]
+     * モーション終了時のフェードアウト処理時間を取得する
+     * @param groupName モーショングループの名前
+     * @param index 配列のインデックス値
+     * @return フェードアウト処理時間[秒]
      */
-    public abstract getMotionFadeOutTimeValue(groupName: string, index: number): number;
+    public abstract getMotionFadeOutTimeValue(
+      groupName: string,
+      index: number,
+    ): number;
 
     /**
-     * 获取用户数据文件名
-     * @return 用户数据文件名
+     * ユーザーデータのファイル名を取得する
+     * @return ユーザーデータのファイル名
      */
     public abstract getUserDataFile(): string;
 
     /**
-     * 获取布局信息
-     * @param outLayoutMap csmMap类实例
-     * @return true 存在布局信息
-     * @return false 布局信息不存在
+     * レイアウト情報を取得する
+     * @param outLayoutMap csmMapクラスのインスタンス
+     * @return true レイアウト情報が存在する
+     * @return false レイアウト情報が存在しない
      */
     public abstract getLayoutMap(outLayoutMap: csmMap<string, number>): boolean;
 
-
     /**
-     * 获取与眼贴相关的参数数量
-     * @return 与眼贴相关的参数数量
+     * 目パチに関連付けられたパラメータの数を取得する
+     * @return 目パチに関連付けられたパラメータの数
      */
     public abstract getEyeBlinkParameterCount(): number;
 
     /**
-     * 获取与眼贴相关的参数的ID
-     * @param index 数组索引值
-     * @return 参数ID
+     * 目パチに関連付けられたパラメータのIDを取得する
+     * @param index 配列のインデックス値
+     * @return パラメータID
      */
     public abstract getEyeBlinkParameterId(index: number): CubismIdHandle;
 
     /**
-     * 获取与唇形同步相关的参数数量
-     * @return 与唇形同步相关的参数数量
+     * リップシンクに関連付けられたパラメータの数を取得する
+     * @return リップシンクに関連付けられたパラメータの数
      */
     public abstract getLipSyncParameterCount(): number;
 
     /**
-     * 获取与唇形同步相关的参数id
-     * @param index 数组索引值
-     * @return 参数ID
+     * リップシンクに関連付けられたパラメータの数を取得する
+     * @param index 配列のインデックス値
+     * @return パラメータID
      */
     public abstract getLipSyncParameterId(index: number): CubismIdHandle;
   }

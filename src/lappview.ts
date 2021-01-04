@@ -211,10 +211,10 @@ export class LAppView {
       live2DManager.onTap(x, y);
 
       // 敲击齿轮
-      if (this._gear && this._gear.isHit(pointX, pointY)) {
-        LAppPal.printLog('[APP]click gear x: {0} y: {1}', pointX, pointY);
-        // live2DManager.nextScene();
-      }
+      // if (this._gear && this._gear.isHit(pointX, pointY)) {
+      //   LAppPal.printLog('[APP]click gear x: {0} y: {1}', pointX, pointY);
+      //   live2DManager.nextScene();
+      // }
     }
   }
 

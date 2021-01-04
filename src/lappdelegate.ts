@@ -5,7 +5,10 @@
  * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { Live2DCubismFramework as live2dcubismframework, Option as Csm_Option } from './framework/live2dcubismframework';
+import {
+  Live2DCubismFramework as live2dcubismframework,
+  Option as Csm_Option,
+} from './framework/live2dcubismframework';
 import { Live2DCubismFramework as cubismmatrix44 } from './framework/math/cubismmatrix44';
 import Csm_CubismMatrix44 = cubismmatrix44.CubismMatrix44;
 import Csm_CubismFramework = live2dcubismframework.CubismFramework;
@@ -50,12 +53,12 @@ export class LAppDelegate {
     s_instance = null as any;
   }
 
-  public _cubismOption: Csm_Option;          // Cubism3 Option
-  public _view: LAppView;                    // View信息
-  public _captured: boolean;                 // 你点击了吗
-  public _mouseX: number;                    // 鼠标X坐标
-  public _mouseY: number;                    // 鼠标Y坐标
-  public _isEnd: boolean;                    // APP终止了吗
+  public _cubismOption: Csm_Option; // Cubism3 Option
+  public _view: LAppView; // View信息
+  public _captured: boolean; // 你点击了吗
+  public _mouseX: number; // 鼠标X坐标
+  public _mouseY: number; // 鼠标Y坐标
+  public _isEnd: boolean; // APP终止了吗
   public _textureManager: LAppTextureManager; // 纹理管理
   public _renderThreadId: number;
   public _renderStatus: boolean;
@@ -79,12 +82,15 @@ export class LAppDelegate {
   /**
    * 初始化您需要的APP。
    */
-  public initialize(): boolean {
+  public initialize(el?: {
+    wrap: HTMLDivElement;
+    canvas: HTMLCanvasElement;
+  }): boolean {
     const canvasId = 'live2d-core-canvas';
     const width = window.innerWidth;
     const height = window.innerHeight;
     // 创建html元素
-    let wrap = document.getElementById('live2d-core-wrap');
+    let wrap = el ? el.wrap : document.getElementById('live2d-core-wrap') as HTMLDivElement;
     if (!wrap) {
       wrap = document.createElement('div');
       wrap.id = 'live2d-core-wrap';
@@ -93,10 +99,10 @@ export class LAppDelegate {
       wrap.style.height = '100%';
       wrap.style.top = '0px';
       wrap.style.left = '0px';
-      wrap.style.zIndex = '100'
+      wrap.style.zIndex = '100';
       document.body.appendChild(wrap);
     }
-    canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+    canvas = el ? el.canvas : document.getElementById(canvasId) as HTMLCanvasElement;
     if (!canvas) {
       canvas = document.createElement('canvas');
       canvas.id = canvasId;
@@ -106,11 +112,15 @@ export class LAppDelegate {
       canvas.style.zIndex = '100';
       canvas.setAttribute('width', width.toString());
       canvas.setAttribute('height', height.toString());
-      (document.getElementById('live2d-core-wrap') as HTMLDivElement).appendChild(canvas);
+      (document.getElementById(
+        'live2d-core-wrap',
+      ) as HTMLDivElement).appendChild(canvas);
     }
 
     // 初始化gl上下文
-    gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false }) || canvas.getContext('experimental-webgl') as any;
+    gl =
+      canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false }) ||
+      (canvas.getContext('experimental-webgl') as any);
 
     if (!gl) {
       alert('WebGL无法初始化。 浏览器似乎不支持');
@@ -133,8 +143,8 @@ export class LAppDelegate {
     if (supportTouch) {
       // 与触摸相关的回调函数注册
       /**
-      * 触摸时调用。
-      */
+       * 触摸时调用。
+       */
       canvas.addEventListener('touchstart', (e: TouchEvent) => {
         if (!this._view) {
           LAppPal.printLog('view notfound');
@@ -151,8 +161,8 @@ export class LAppDelegate {
         this._view.onTouchesBegan(posX, posY);
       });
       /*
-      * 触摸移动时调用。
-      */
+       * 触摸移动时调用。
+       */
       canvas.addEventListener('touchmove', (e: TouchEvent) => {
         if (!this._captured) {
           return;
@@ -170,9 +180,9 @@ export class LAppDelegate {
 
         this._view.onTouchesMoved(posX, posY);
       });
-    /*
-    * 触摸完成时调用。
-    */
+      /*
+       * 触摸完成时调用。
+       */
       canvas.addEventListener('touchend', (e: TouchEvent) => {
         this._captured = false;
 
@@ -188,9 +198,9 @@ export class LAppDelegate {
 
         this._view.onTouchesEnded(posX, posY);
       });
-    /*
-    * 取消触摸。
-    */
+      /*
+       * 取消触摸。
+       */
       canvas.addEventListener('touchcancel', (e: TouchEvent) => {
         this._captured = false;
 
@@ -244,7 +254,6 @@ export class LAppDelegate {
           return;
         }
 
-
         const rect = (e.target as Element).getBoundingClientRect();
         const posX: number = e.clientX - rect.left;
         const posY: number = e.clientY - rect.top;
@@ -281,7 +290,7 @@ export class LAppDelegate {
   /**
    * 执行过程。
    */
-  public startRender(param?: { efficient: boolean, fps?: number}): void {
+  public startRender(param?: { efficient: boolean; fps?: number }): void {
     if (this._renderStatus) {
       return;
     }
@@ -318,7 +327,10 @@ export class LAppDelegate {
       this._view.render();
 
       // 递归调用循环
-      if (Object.prototype.toString.call(param) === '[object Object]' && param) {
+      if (
+        Object.prototype.toString.call(param) === '[object Object]' &&
+        param
+      ) {
         if (param.efficient) {
           this._renderThreadId = requestAnimationFrame(loop);
         } else {

@@ -1,9 +1,9 @@
-/*
-* Copyright(c) Live2D Inc. All rights reserved.
-*
-* Use of this source code is governed by the Live2D Open Software license
-* that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
-*/
+/**
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Open Software license
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ */
 
 import { Live2DCubismFramework as csmvector } from '../type/csmvector';
 import { Live2DCubismFramework as cubismmodel } from '../model/cubismmodel';
@@ -12,75 +12,77 @@ import CubismIdHandle = cubismid.CubismIdHandle;
 import CubismModel = cubismmodel.CubismModel;
 import csmVector = csmvector.csmVector;
 
-
 export namespace Live2DCubismFramework {
   /**
-   * 呼吸功能
+   * 呼吸機能
    *
-   * 提供呼吸功能。
+   * 呼吸機能を提供する。
    */
   export class CubismBreath {
-
     /**
-     * 创建实例
+     * インスタンスの作成
      */
     public static create(): CubismBreath {
       return new CubismBreath();
     }
 
     /**
-     * 销毁实例
-     * @param instance CubismBreath目标
+     * インスタンスの破棄
+     * @param instance 対象のCubismBreath
      */
     public static delete(instance: CubismBreath): void {
       if (instance != null) {
-        instance = null as any;
+        instance = null;
       }
     }
 
-    public _breathParameters: csmVector<BreathParameterData> = undefined as any; // 与呼吸相关的参数列表
-    public _currentTime: number;  // 积分时间[秒]
-
+    public _breathParameters: csmVector<BreathParameterData>; // 呼吸にひもづいているパラメータのリスト
+    public _currentTime: number; // 積算時間[秒]
 
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor() {
       this._currentTime = 0.0;
     }
 
     /**
-     * 连接呼吸参数
-     * @param breathParameters 与呼吸相关的参数列表
+     * 呼吸のパラメータの紐づけ
+     * @param breathParameters 呼吸を紐づけたいパラメータのリスト
      */
-    public setParameters(breathParameters: csmVector<BreathParameterData>): void {
+    public setParameters(
+      breathParameters: csmVector<BreathParameterData>,
+    ): void {
       this._breathParameters = breathParameters;
     }
 
     /**
-     * 获取与呼吸相关的参数
-     * @return 与呼吸相关的参数列表
+     * 呼吸に紐づいているパラメータの取得
+     * @return 呼吸に紐づいているパラメータのリスト
      */
     public getParameters(): csmVector<BreathParameterData> {
       return this._breathParameters;
     }
 
     /**
-     * 更新模型参数
-     * @param model 目标模型
-     * @param deltaTimeSeconds 达美时间[秒]
+     * モデルのパラメータの更新
+     * @param model 対象のモデル
+     * @param deltaTimeSeconds デルタ時間[秒]
      */
-    public updateParameters(model: CubismModel, deltaTimeSeconds: number): void {
+    public updateParameters(
+      model: CubismModel,
+      deltaTimeSeconds: number,
+    ): void {
       this._currentTime += deltaTimeSeconds;
 
       const t: number = this._currentTime * 2.0 * 3.14159;
 
-      for (let i: number = 0; i < this._breathParameters.getSize(); ++i) {
+      for (let i = 0; i < this._breathParameters.getSize(); ++i) {
         const data: BreathParameterData = this._breathParameters.at(i);
 
         model.addParameterValueById(
           data.parameterId,
-          data.offset + (data.peak * Math.sin(t / data.cycle)),
+          data.offset + data.peak * Math.sin(t / data.cycle),
           data.weight,
         );
       }
@@ -88,39 +90,35 @@ export namespace Live2DCubismFramework {
   }
 
   /**
-   * 呼吸参数信息
+   * 呼吸のパラメータ情報
    */
   export class BreathParameterData {
 
-    public parameterId: CubismIdHandle;  // 用于关联呼吸的参数ID
-    public offset: number;         // 呼吸时的波浪偏移是正弦波
-    public peak: number;           // 呼吸时的波高是正弦波
-    public cycle: number;          // 呼吸时的波浪期是正弦波
-    public weight: number;         // 参数的权重
+    public parameterId: CubismIdHandle; // 呼吸をひもづけるパラメータID\
+    public offset: number; // 呼吸を正弦波としたときの、波のオフセット
+    public peak: number; // 呼吸を正弦波としたときの、波の高さ
+    public cycle: number; // 呼吸を正弦波としたときの、波の周期
+    public weight: number; // パラメータへの重み
     /**
-     * 构造函数
-     * @param parameterId   与呼吸相关的参数ID
-     * @param offset        呼吸时的波浪偏移是正弦波
-     * @param peak          呼吸时的波高是正弦波
-     * @param cycle         呼吸时的波浪期是正弦波
-     * @param weight        参数的权重
+     * コンストラクタ
+     * @param parameterId   呼吸をひもづけるパラメータID
+     * @param offset        呼吸を正弦波としたときの、波のオフセット
+     * @param peak          呼吸を正弦波としたときの、波の高さ
+     * @param cycle         呼吸を正弦波としたときの、波の周期
+     * @param weight        パラメータへの重み
      */
-    constructor(parameterId?: CubismIdHandle, offset?: number, peak?: number, cycle?: number, weight?: number) {
-      this.parameterId = (parameterId == undefined)
-        ? null as any
-        : parameterId;
-      this.offset = (offset == undefined)
-        ? 0.0
-        : offset;
-      this.peak = (peak == undefined)
-        ? 0.0
-        : peak;
-      this.cycle = (cycle == undefined)
-        ? 0.0
-        : cycle;
-      this.weight = (weight == undefined)
-        ? 0.0
-        : weight;
+    constructor(
+      parameterId?: CubismIdHandle,
+      offset?: number,
+      peak?: number,
+      cycle?: number,
+      weight?: number,
+    ) {
+      this.parameterId = parameterId == undefined ? null : parameterId;
+      this.offset = offset == undefined ? 0.0 : offset;
+      this.peak = peak == undefined ? 0.0 : peak;
+      this.cycle = cycle == undefined ? 0.0 : cycle;
+      this.weight = weight == undefined ? 0.0 : weight;
     }
   }
 }

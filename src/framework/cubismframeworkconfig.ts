@@ -1,32 +1,32 @@
-/*
-* Copyright(c) Live2D Inc. All rights reserved.
-*
-* Use of this source code is governed by the Live2D Open Software license
-* that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
-*/
+/**
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Open Software license
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ */
 
 // ========================================================
-//  设置日志输出功能
+//  ログ出力関数の設定
 // ========================================================
 
-// ---------- 日志输出级别选择项目定义 ----------
-/// 详细的日志输出设置
-export const CSM_LOG_LEVEL_VERBOSE: number = 0;
-/// 调试日志输出设置
-export const CSM_LOG_LEVEL_DEBUG: number = 1;
-/// 信息日志输出设置
-export const CSM_LOG_LEVEL_INFO: number = 2;
-/// 警告日志输出设置
-export const CSM_LOG_LEVEL_WARNING: number = 3;
-/// 错误日志输出设置
-export const CSM_LOG_LEVEL_ERROR: number = 4;
-/// 记录输出关闭设置
-export const CSM_LOG_LEVEL_OFF: number = 5;
+// ---------- ログ出力レベル 選択項目 定義 ----------
+// 詳細ログ出力設定
+export const CSM_LOG_LEVEL_VERBOSE = 0;
+// デバッグログ出力設定
+export const CSM_LOG_LEVEL_DEBUG = 1;
+// Infoログ出力設定
+export const CSM_LOG_LEVEL_INFO = 2;
+// 警告ログ出力設定
+export const CSM_LOG_LEVEL_WARNING = 3;
+// エラーログ出力設定
+export const CSM_LOG_LEVEL_ERROR = 4;
+// ログ出力オフ設定
+export const CSM_LOG_LEVEL_OFF = 5;
 
 /**
-* 日志输出级别设置。
-*
-* 强制更改日志输出级别时启用定义。
-* 要选择 CSM_LOG_LEVEL_VERBOSE ～ CSM_LOG_LEVEL_OFF。
-*/
+ * ログ出力レベル設定。
+ *
+ * 強制的にログ出力レベルを変える時に定義を有効にする。
+ * CSM_LOG_LEVEL_VERBOSE ～ CSM_LOG_LEVEL_OFF を選択する。
+ */
 export const CSM_LOG_LEVEL: number = CSM_LOG_LEVEL_VERBOSE;

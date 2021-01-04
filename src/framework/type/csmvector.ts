@@ -1,29 +1,29 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 export namespace Live2DCubismFramework {
   /**
-   * 矢量类型（变量序列类型）
+   * ベクター型（可変配列型）
    */
   export class csmVector<T> {
 
-    public static readonly s_defaultSize = 10; // 容器初始化的默认大小
+    public static readonly s_defaultSize = 10; // コンテナ初期化のデフォルトサイズ
 
-    public _ptr: T[];    // 容器起始地址
-    public _size: number; // 容器中的元素数量
-    public _capacity: number; // 集装箱容量
+    public _ptr: T[]; // コンテナの先頭アドレス
+    public _size: number; // コンテナの要素数
+    public _capacity: number; // コンテナのキャパシティ
     /**
-     * 带参数的构造函数
-     * @param iniitalCapacity 初始化后的容量。 数据大小为_capacity * sizeof（T）
-     * @param zeroClear 如果为true，则填充初始化时保留的区域为0
+     * 引数付きコンストラクタ
+     * @param iniitalCapacity 初期化後のキャパシティ。データサイズは_capacity * sizeof(T)
+     * @param zeroClear trueなら初期化時に確保した領域を0で埋める
      */
-    constructor(initialCapacity: number = 0) {
+    constructor(initialCapacity = 0) {
       if (initialCapacity < 1) {
-        this._ptr = new Array();
+        this._ptr = [];
         this._capacity = 0;
         this._size = 0;
       } else {
@@ -34,7 +34,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 返回索引指定的元素
+     * インデックスで指定した要素を返す
      */
     public at(index: number): T {
       return this._ptr[index];
@@ -42,17 +42,17 @@ export namespace Live2DCubismFramework {
 
     /**
      * 要素をセット
-     * @param index 将元素设置为的索引
-     * @param value 要设置的元素
+     * @param index 要素をセットするインデックス
+     * @param value セットする要素
      */
     public set(index: number, value: T): void {
       this._ptr[index] = value;
     }
 
     /**
-     * 拿一个容器
+     * コンテナを取得する
      */
-    public get(offset: number = 0): T[] {
+    public get(offset = 0): T[] {
       const ret: T[] = new Array<T>();
       for (let i = offset; i < this._size; i++) {
         ret.push(this._ptr[i]);
@@ -61,19 +61,21 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * pushBack处理，向容器添加新元素
-     * @param value PushBack流程要添加的值
+     * pushBack処理、コンテナに新たな要素を追加する
+     * @param value PushBack処理で追加する値
      */
     public pushBack(value: T): void {
       if (this._size >= this._capacity) {
-        this.prepareCapacity(this._capacity == 0 ? csmVector.s_defaultSize : this._capacity * 2);
+        this.prepareCapacity(
+          this._capacity == 0 ? csmVector.s_defaultSize : this._capacity * 2,
+        );
       }
 
       this._ptr[this._size++] = value;
     }
 
     /**
-     * 释放容器的所有元素
+     * コンテナの全要素を解放する
      */
     public clear(): void {
       this._ptr.length = 0;
@@ -81,26 +83,26 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 返回容器中的元素数
-     * @return 容器中的元素数
+     * コンテナの要素数を返す
+     * @return コンテナの要素数
      */
     public getSize(): number {
       return this._size;
     }
 
     /**
-     * 对容器的所有元素执行替换处理
-     * @param newSize 分配过程后的大小
-     * @param value 要分配给元素的值
+     * コンテナの全要素に対して代入処理を行う
+     * @param newSize 代入処理後のサイズ
+     * @param value 要素に代入する値
      */
     public assign(newSize: number, value: T): void {
       const curSize = this._size;
 
       if (curSize < newSize) {
-        this.prepareCapacity(newSize);  // capacity更新
+        this.prepareCapacity(newSize); // capacity更新
       }
 
-      for (let i: number = 0; i < newSize; i++) {
+      for (let i = 0; i < newSize; i++) {
         this._ptr[i] = value;
       }
 
@@ -108,24 +110,29 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 更改大小
+     * サイズ変更
      */
-    public resize(newSize: number, value: T): void {
+    public resize(newSize: number, value: T = null): void {
       this.updateSize(newSize, value, true);
     }
 
     /**
-     * 更改大小
+     * サイズ変更
      */
-    public updateSize(newSize: number, value: any = null, callPlacementNew: boolean = true): void {
+    public updateSize(
+      newSize: number,
+      value: any = null,
+      callPlacementNew = true,
+    ): void {
       const curSize: number = this._size;
 
       if (curSize < newSize) {
-        this.prepareCapacity(newSize);  // capacity更新
+        this.prepareCapacity(newSize); // capacity更新
 
         if (callPlacementNew) {
           for (let i: number = this._size; i < newSize; i++) {
             if (typeof value == 'function') {
+              // new
               this._ptr[i] = JSON.parse(JSON.stringify(new value()));
             } else {
               this._ptr[i] = value;
@@ -140,18 +147,22 @@ export namespace Live2DCubismFramework {
         // newSize <= this._size
         // ---
         const sub = this._size - newSize;
-        this._ptr.splice(this._size - sub, sub);    // 丢弃因为没有必要
+        this._ptr.splice(this._size - sub, sub); // 不要なので破棄する
       }
       this._size = newSize;
     }
 
     /**
-     * 将容器元素插入容器中
-     * @param position 插入位置
-     * @param begin　容器的起始位置要插入
-     * @param end 要插入的容器的最终位置
+     * コンテナにコンテナ要素を挿入する
+     * @param position 挿入する位置
+     * @param begin 挿入するコンテナの開始位置
+     * @param end 挿入するコンテナの終端位置
      */
-    public insert(position: iterator<T>, begin: iterator<T>, end: iterator<T>): void {
+    public insert(
+      position: iterator<T>,
+      begin: iterator<T>,
+      end: iterator<T>,
+    ): void {
       let dstSi: number = position._index;
       const srcSi: number = begin._index;
       const srcEi: number = end._index;
@@ -160,15 +171,15 @@ export namespace Live2DCubismFramework {
 
       this.prepareCapacity(this._size + addCount);
 
-      // 通过转移现有数据来插入来创建差距
+      // 挿入用の既存データをシフトして隙間を作る
       const addSize = this._size - dstSi;
       if (addSize > 0) {
-        for (let i: number = 0; i < addSize; i++) {
-          this._ptr.splice(dstSi + i, 0, null as any);
+        for (let i = 0; i < addSize; i++) {
+          this._ptr.splice(dstSi + i, 0, null);
         }
       }
 
-      for (let i: number = srcSi; i < srcEi; i++ , dstSi++) {
+      for (let i: number = srcSi; i < srcEi; i++, dstSi++) {
         this._ptr[dstSi] = begin._vector._ptr[i];
       }
 
@@ -176,14 +187,14 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 从容器中删除索引指定的元素
-     * @param index 指数值
-     * @return true 执行删除
-     * @return false 超出范围
+     * コンテナからインデックスで指定した要素を削除する
+     * @param index インデックス値
+     * @return true 削除実行
+     * @return false 削除範囲外
      */
     public remove(index: number): boolean {
       if (index < 0 || this._size <= index) {
-        return false;   // 超出范围
+        return false; // 削除範囲外
       }
 
       this._ptr.splice(index, 1);
@@ -193,26 +204,26 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 从容器中删除元素并移动其他元素
-     * @param ite 要删除的元素
+     * コンテナから要素を削除して他の要素をシフトする
+     * @param ite 削除する要素
      */
     public erase(ite: iterator<T>): iterator<T> {
       const index: number = ite._index;
       if (index < 0 || this._size <= index) {
-        return ite; // 超出范围
+        return ite; // 削除範囲外
       }
 
-      // 删除
+      // 削除
       this._ptr.splice(index, 1);
       --this._size;
 
-      const ite2: iterator<T> = new iterator<T>(this, index);   // 结束
+      const ite2: iterator<T> = new iterator<T>(this, index); // 終了
       return ite2;
     }
 
     /**
-     * 确保集装箱容量
-     * @param newSize 新产能。 如果参数值小于当前大小，则不执行任何操作。
+     * コンテナのキャパシティを確保する
+     * @param newSize 新たなキャパシティ。引数の値が現在のサイズ未満の場合は何もしない.
      */
     public prepareCapacity(newSize: number): void {
       if (newSize > this._capacity) {
@@ -227,17 +238,16 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 返回容器的第一个元素
+     * コンテナの先頭要素を返す
      */
     public begin(): iterator<T> {
-      const ite: iterator<T> = (this._size == 0)
-        ? this.end()
-        : new iterator<T>(this, 0);
+      const ite: iterator<T> =
+        this._size == 0 ? this.end() : new iterator<T>(this, 0);
       return ite;
     }
 
     /**
-     * 返回容器的终端元素
+     * コンテナの終端要素を返す
      */
     public end(): iterator<T> {
       const ite: iterator<T> = new iterator<T>(this, this._size);
@@ -256,18 +266,18 @@ export namespace Live2DCubismFramework {
 
   export class iterator<T> {
 
-    public _index: number; // 集装箱指数值
-    public _vector: csmVector<T>;  // 容器
+    public _index: number; // コンテナのインデックス値
+    public _vector: csmVector<T>; // コンテナ
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor(v?: csmVector<T>, index?: number) {
-      this._vector = (v != undefined) ? v : null as any;
-      this._index = (index != undefined) ? index : 0;
+      this._vector = v != undefined ? v : null;
+      this._index = index != undefined ? index : 0;
     }
 
     /**
-     * 换人
+     * 代入
      */
     public set(ite: iterator<T>): iterator<T> {
       this._index = ite._index;
@@ -276,7 +286,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 前缀++操作
+     * 前置き++演算
      */
     public preIncrement(): iterator<T> {
       ++this._index;
@@ -284,7 +294,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 前言 -- 操作
+     * 前置き--演算
      */
     public preDecrement(): iterator<T> {
       --this._index;
@@ -292,23 +302,19 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * Postfix ++运算符
+     * 後置き++演算子
      */
     public increment(): iterator<T> {
-      const iteold = new iterator<T>(this._vector, this._index++);
-      this._vector = iteold._vector;
-      this._index = iteold._index;
-      return this;
+      const iteold = new iterator<T>(this._vector, this._index++); // 古い値を保存
+      return iteold;
     }
 
     /**
      * 後置き--演算子
      */
     public decrement(): iterator<T> {
-      const iteold = new iterator<T>(this._vector, this._index--);  // 古い値を保存
-      this._vector = iteold._vector;
-      this._index = iteold._index;
-      return this;
+      const iteold = new iterator<T>(this._vector, this._index--); // 古い値を保存
+      return iteold;
     }
 
     /**
@@ -319,7 +325,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * =运算符重载
+     * =演算子のオーバーロード
      */
     public substitution(ite: iterator<T>): iterator<T> {
       this._index = ite._index;
@@ -328,10 +334,10 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * ！=运算符重载
+     * !=演算子のオーバーロード
      */
     public notEqual(ite: iterator<T>): boolean {
-      return (this._index != ite._index) || (this._vector != ite._vector);
+      return this._index != ite._index || this._vector != ite._vector;
     }
   }
 }

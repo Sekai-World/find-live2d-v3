@@ -1,43 +1,45 @@
-/*
-* Copyright(c) Live2D Inc. All rights reserved.
-*
-* Use of this source code is governed by the Live2D Open Software license
-* that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
-*/
+/**
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Open Software license
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ */
 
 export namespace Live2DCubismFramework {
+  /**
+   * メモリアロケーションを抽象化したクラス
+   *
+   * メモリ確保・解放処理をプラットフォーム側で実装して
+   * フレームワークから呼び出すためのインターフェース
+   */
+  export abstract class ICubismAllocator {
     /**
-     * 一个抽象内存分配的类
+     * アラインメント制約なしのヒープ・メモリーを確保します
      *
-     * 在平台端实现内存分配/释放处理
-     * 从框架调用的接口
+     * @param size 確保するバイト数
+     * @return 成功すると割り当てられたメモリのアドレス。そうでなければ'0'を返す
      */
-    export abstract class ICubismAllocator {
-        /**
-         * 保留没有对齐约束的堆内存
-         * @param size 要保留的字节数
-         * @return 成功分配内存的地址。 否则返回'0'
-         */
-        public abstract allocate(size: number): any;
+    public abstract allocate(size: number): any;
 
-        /**
-         * 没有对齐约束的空闲堆内存
-         * @param memory 要释放的内存地址
-         */
-        public abstract deallocate(memory: any): void;
+    /**
+     * アラインメント制約なしのヒープ・メモリーを解放します。
+     *
+     * @param memory 解放するメモリのアドレス
+     */
+    public abstract deallocate(memory: any): void;
 
-        /**
-         * 使用对齐约束保留堆内存。
-         * @param size 要保留的字节数
-         * @param alignment 内存块的对齐宽度
-         * @return 成功分配内存的地址。 否则返回'0'
-         */
-        public abstract  allocateAligned(size: number, alignment: number): any;
+    /**
+     * アラインメント制約有のヒープ・メモリーを確保します。
+     * @param size 確保するバイト数
+     * @param alignment メモリーブロックのアラインメント幅
+     * @return 成功すると割り当てられたメモリのアドレス。そうでなければ'0'を返す
+     */
+    public abstract allocateAligned(size: number, alignment: number): any;
 
-        /**
-         * 具有对齐约束的空闲堆内存
-         * @param alignedMemory 要释放的内存地址
-         */
-        public abstract deallocateAligned(alignedMemory: any): void;
-    }
+    /**
+     * アラインメント制約ありのヒープ・メモリーを解放します。
+     * @param alignedMemory 解放するメモリのアドレス
+     */
+    public abstract deallocateAligned(alignedMemory: any): void;
+  }
 }

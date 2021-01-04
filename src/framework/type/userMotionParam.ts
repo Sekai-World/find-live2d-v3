@@ -9,4 +9,15 @@ export namespace Live2DCubismFramework {
     autoAppear?: boolean;
     callback?: () => void;
   }
+
+  export interface CubismMotionUrlParam {
+    motionName: string;
+    motionUrl: string;
+    priority: number;
+    fadeInTime?: number;
+    fadeOutTime?: number;
+    autoIdle?: boolean;
+    autoAppear?: boolean;
+    callback?: () => void;
+  }
 }

@@ -1,6 +1,14 @@
+/**
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Proprietary Software license
+ * that can be found at https://www.live2d.com/eula/live2d-proprietary-software-license-agreement_en.html.
+ */
 declare namespace Live2DCubismCore {
     /** Cubism version identifier. */
     type csmVersion = number;
+    /** moc3 version identifier. */
+    type csmMocVersion = number;
     /** Log handler.
      *
      * @param message Null-terminated string message to log.
@@ -14,6 +22,20 @@ declare namespace Live2DCubismCore {
          * @return Core version.
          */
         public static csmGetVersion(): csmVersion;
+        /**
+         * Gets Moc file supported latest version.
+         *
+         * @return Moc file latest format version.
+         */
+        public static csmGetLatestMocVersion(): csmMocVersion;
+        /**
+         * Gets Moc file format version.
+         *
+         * @param moc Moc
+         *
+         * @return csmMocVersion
+         */
+        public static csmGetMocVersion(moc: Moc): csmMocVersion;
         private constructor();
     }
     /** Cubism logging. */
@@ -225,6 +247,14 @@ declare namespace Live2DCubismCore {
          *
          * @return [[true]] if bit set; [[false]] otherwise
         */
+        public static hasIsInvertedMaskBit(bitfield: number): boolean;
+        /**
+         * Checks whether flag is set in bitfield.
+         *
+         * @param bitfield Bitfield to query against.
+         *
+         * @return [[true]] if bit set; [[false]] otherwise
+        */
         public static hasIsVisibleBit(bitfield: number): boolean;
         /**
          * Checks whether flag is set in bitfield.
@@ -267,4 +297,5 @@ declare namespace Live2DCubismCore {
         */
         public static hasVertexPositionsDidChangeBit(bitfield: number): boolean;
     }
+    /** Emscripten Cubism Core module. */
 }

@@ -1,9 +1,9 @@
-/*
-* Copyright(c) Live2D Inc. All rights reserved.
-*
-* Use of this source code is governed by the Live2D Open Software license
-* that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
-*/
+/**
+ * Copyright(c) Live2D Inc. All rights reserved.
+ *
+ * Use of this source code is governed by the Live2D Open Software license
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ */
 
 import { Live2DCubismFramework as cubismmodeluserdatajson } from './cubismmodeluserdatajson';
 import { Live2DCubismFramework as cubismid } from '../id/cubismid';
@@ -17,33 +17,36 @@ import CubismIdHandle = cubismid.CubismIdHandle;
 import CubismModelUserDataJson = cubismmodeluserdatajson.CubismModelUserDataJson;
 
 export namespace Live2DCubismFramework {
-  const ArtMesh: string = 'ArtMesh';
+  const ArtMesh = 'ArtMesh';
 
   /**
-   * 用户数据界面
+   * ユーザーデータインターフェース
    *
-   * 记录从Json读取的用户数据的结构
+   * Jsonから読み込んだユーザーデータを記録しておくための構造体
    */
   export class CubismModelUserDataNode {
-    public targetType: CubismIdHandle = undefined as any;   // 用户数据目标类型
-    public targetId: CubismIdHandle = undefined as any;   // 用户数据目标ID
-    public value: csmString = undefined as any;  // 用户数据
+    public targetType: CubismIdHandle; // ユーザーデータターゲットタイプ
+    public targetId: CubismIdHandle; // ユーザーデータターゲットのID
+    public value: csmString; // ユーザーデータ
   }
 
   /**
-   * 用户数据管理类
+   * ユーザデータの管理クラス
    *
-   * 加载，管理，搜索界面和发布用户数据
+   * ユーザデータをロード、管理、検索インターフェイス、解放までを行う。
    */
   export class CubismModelUserData {
     /**
-     * 创建实例
+     * インスタンスの作成
      *
-     * @param buffer    加载userdata3.json的缓冲区
-     * @param size      缓冲区大小
-     * @return 创建实例
+     * @param buffer    userdata3.jsonが読み込まれているバッファ
+     * @param size      バッファのサイズ
+     * @return 作成されたインスタンス
      */
-    public static create(buffer: ArrayBuffer, size: number): CubismModelUserData {
+    public static create(
+      buffer: ArrayBuffer,
+      size: number,
+    ): CubismModelUserData {
       const ret: CubismModelUserData = new CubismModelUserData();
 
       ret.parseUserData(buffer, size);
@@ -52,22 +55,22 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 销毁实例
+     * インスタンスを破棄する
      *
-     * @param modelUserData 毁灭的实例
+     * @param modelUserData 破棄するインスタンス
      */
     public static delete(modelUserData: CubismModelUserData): void {
       if (modelUserData != null) {
         modelUserData.release();
-        modelUserData = null as any;
+        modelUserData = null;
       }
     }
 
-    private _userDataNodes: csmVector<CubismModelUserDataNode>;          // 用户数据结构数组
-    private _artMeshUserDataNode: csmVector<CubismModelUserDataNode>;    // 继续阅读清单
+    private _userDataNodes: csmVector<CubismModelUserDataNode>; // ユーザーデータ構造体配列
+    private _artMeshUserDataNode: csmVector<CubismModelUserDataNode>; // 閲覧リストの保持
 
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor() {
       this._userDataNodes = new csmVector<CubismModelUserDataNode>();
@@ -75,31 +78,36 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 获取ArtMesh用户数据列表
+     * ArtMeshのユーザーデータのリストの取得
      *
-     * @return 用户数据列表
+     * @return ユーザーデータリスト
      */
     public getArtMeshUserDatas(): csmVector<CubismModelUserDataNode> {
       return this._artMeshUserDataNode;
     }
 
     /**
-     * userdata3.json解析
+     * userdata3.jsonのパース
      *
-     * @param buffer    读取userdata3.json的缓冲区
-     * @param size      缓冲区大小
+     * @param buffer    userdata3.jsonが読み込まれているバッファ
+     * @param size      バッファのサイズ
      */
     public parseUserData(buffer: ArrayBuffer, size: number): void {
-      let json: CubismModelUserDataJson = new CubismModelUserDataJson(buffer, size);
+      let json: CubismModelUserDataJson = new CubismModelUserDataJson(
+        buffer,
+        size,
+      );
 
       const typeOfArtMesh = CubismFramework.getIdManager().getId(ArtMesh);
       const nodeCount: number = json.getUserDataCount();
 
-      for (let i: number = 0; i < nodeCount; i++) {
+      for (let i = 0; i < nodeCount; i++) {
         const addNode: CubismModelUserDataNode = new CubismModelUserDataNode();
 
         addNode.targetId = json.getUserDataId(i);
-        addNode.targetType = CubismFramework.getIdManager().getId(json.getUserDataTargetType(i));
+        addNode.targetType = CubismFramework.getIdManager().getId(
+          json.getUserDataTargetType(i),
+        );
         addNode.value = new csmString(json.getUserDataValue(i));
         this._userDataNodes.pushBack(addNode);
 
@@ -109,20 +117,20 @@ export namespace Live2DCubismFramework {
       }
 
       json.release();
-      json = void 0 as any;
+      json = void 0;
     }
 
     /**
-     * 析构函数等效处理
+     * デストラクタ相当の処理
      *
-     * 释放用户数据数组
+     * ユーザーデータ構造体配列を解放する
      */
     public release(): void {
-      for (let i: number = 0; i < this._userDataNodes.getSize(); ++i) {
-        this._userDataNodes.set(i, null as any);
+      for (let i = 0; i < this._userDataNodes.getSize(); ++i) {
+        this._userDataNodes.set(i, null);
       }
 
-      this._userDataNodes = null as any;
+      this._userDataNodes = null;
     }
   }
 }

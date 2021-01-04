@@ -1,65 +1,65 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 /**
- * @brief 保持参数ID默认值的常量<br>
- *         默认值规范基于以下手册<br>
- *         http://docs.live2d.com/cubism-editor-manual/standard-parametor-list/
+ * @brief パラメータIDのデフォルト値を保持する定数<br>
+ *         デフォルト値の仕様は以下のマニュアルに基づく<br>
+ *         https://docs.live2d.com/cubism-editor-manual/standard-parametor-list/
  */
 export namespace Live2DCubismFramework {
-    // 部件ID
-    export const HitAreaPrefix: string = 'HitArea';
-    export const HitAreaHead: string = 'Head';
-    export const HitAreaBody: string = 'Body';
-    export const PartsIdCore: string = 'Parts01Core';
-    export const PartsArmPrefix: string = 'Parts01Arm_';
-    export const PartsArmLPrefix: string = 'Parts01ArmL_';
-    export const PartsArmRPrefix: string = 'Parts01ArmR_';
+  // パーツID
+  export const HitAreaPrefix = 'HitArea';
+  export const HitAreaHead = 'Head';
+  export const HitAreaBody = 'Body';
+  export const PartsIdCore = 'Parts01Core';
+  export const PartsArmPrefix = 'Parts01Arm_';
+  export const PartsArmLPrefix = 'Parts01ArmL_';
+  export const PartsArmRPrefix = 'Parts01ArmR_';
 
-    // 参数ID
-    export const ParamAngleX: string = 'ParamAngleX';
-    export const ParamAngleY: string = 'ParamAngleY';
-    export const ParamAngleZ: string = 'ParamAngleZ';
-    export const ParamEyeLOpen: string = 'ParamEyeLOpen';
-    export const ParamEyeLSmile: string = 'ParamEyeLSmile';
-    export const ParamEyeROpen: string = 'ParamEyeROpen';
-    export const ParamEyeRSmile: string = 'ParamEyeRSmile';
-    export const ParamEyeBallX: string = 'ParamEyeBallX';
-    export const ParamEyeBallY: string = 'ParamEyeBallY';
-    export const ParamEyeBallForm: string = 'ParamEyeBallForm';
-    export const ParamBrowLY: string = 'ParamBrowLY';
-    export const ParamBrowRY: string = 'ParamBrowRY';
-    export const ParamBrowLX: string = 'ParamBrowLX';
-    export const ParamBrowRX: string = 'ParamBrowRX';
-    export const ParamBrowLAngle: string = 'ParamBrowLAngle';
-    export const ParamBrowRAngle: string = 'ParamBrowRAngle';
-    export const ParamBrowLForm: string = 'ParamBrowLForm';
-    export const ParamBrowRForm: string = 'ParamBrowRForm';
-    export const ParamMouthForm: string = 'ParamMouthForm';
-    export const ParamMouthOpenY: string = 'ParamMouthOpenY';
-    export const ParamCheek: string = 'ParamCheek';
-    export const ParamBodyAngleX: string = 'ParamBodyAngleX';
-    export const ParamBodyAngleY: string = 'ParamBodyAngleY';
-    export const ParamBodyAngleZ: string = 'ParamBodyAngleZ';
-    export const ParamBreath: string = 'ParamBreath';
-    export const ParamArmLA: string = 'ParamArmLA';
-    export const ParamArmRA: string = 'ParamArmRA';
-    export const ParamArmLB: string = 'ParamArmLB';
-    export const ParamArmRB: string = 'ParamArmRB';
-    export const ParamHandL: string = 'ParamHandL';
-    export const ParamHandR: string = 'ParamHandR';
-    export const ParamHairFront: string = 'ParamHairFront';
-    export const ParamHairSide: string = 'ParamHairSide';
-    export const ParamHairBack: string = 'ParamHairBack';
-    export const ParamHairFluffy: string = 'ParamHairFluffy';
-    export const ParamShoulderY: string = 'ParamShoulderY';
-    export const ParamBustX: string = 'ParamBustX';
-    export const ParamBustY: string = 'ParamBustY';
-    export const ParamBaseX: string = 'ParamBaseX';
-    export const ParamBaseY: string = 'ParamBaseY';
-    export const ParamNONE: string = 'NONE:';
+  // パラメータID
+  export const ParamAngleX = 'ParamAngleX';
+  export const ParamAngleY = 'ParamAngleY';
+  export const ParamAngleZ = 'ParamAngleZ';
+  export const ParamEyeLOpen = 'ParamEyeLOpen';
+  export const ParamEyeLSmile = 'ParamEyeLSmile';
+  export const ParamEyeROpen = 'ParamEyeROpen';
+  export const ParamEyeRSmile = 'ParamEyeRSmile';
+  export const ParamEyeBallX = 'ParamEyeBallX';
+  export const ParamEyeBallY = 'ParamEyeBallY';
+  export const ParamEyeBallForm = 'ParamEyeBallForm';
+  export const ParamBrowLY = 'ParamBrowLY';
+  export const ParamBrowRY = 'ParamBrowRY';
+  export const ParamBrowLX = 'ParamBrowLX';
+  export const ParamBrowRX = 'ParamBrowRX';
+  export const ParamBrowLAngle = 'ParamBrowLAngle';
+  export const ParamBrowRAngle = 'ParamBrowRAngle';
+  export const ParamBrowLForm = 'ParamBrowLForm';
+  export const ParamBrowRForm = 'ParamBrowRForm';
+  export const ParamMouthForm = 'ParamMouthForm';
+  export const ParamMouthOpenY = 'ParamMouthOpenY';
+  export const ParamCheek = 'ParamCheek';
+  export const ParamBodyAngleX = 'ParamBodyAngleX';
+  export const ParamBodyAngleY = 'ParamBodyAngleY';
+  export const ParamBodyAngleZ = 'ParamBodyAngleZ';
+  export const ParamBreath = 'ParamBreath';
+  export const ParamArmLA = 'ParamArmLA';
+  export const ParamArmRA = 'ParamArmRA';
+  export const ParamArmLB = 'ParamArmLB';
+  export const ParamArmRB = 'ParamArmRB';
+  export const ParamHandL = 'ParamHandL';
+  export const ParamHandR = 'ParamHandR';
+  export const ParamHairFront = 'ParamHairFront';
+  export const ParamHairSide = 'ParamHairSide';
+  export const ParamHairBack = 'ParamHairBack';
+  export const ParamHairFluffy = 'ParamHairFluffy';
+  export const ParamShoulderY = 'ParamShoulderY';
+  export const ParamBustX = 'ParamBustX';
+  export const ParamBustY = 'ParamBustY';
+  export const ParamBaseX = 'ParamBaseX';
+  export const ParamBaseY = 'ParamBaseY';
+  export const ParamNONE = 'NONE:';
 }

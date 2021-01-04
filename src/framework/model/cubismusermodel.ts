@@ -1,8 +1,8 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 import { Live2DCubismFramework as cubismframework } from '../live2dcubismframework';
@@ -23,7 +23,7 @@ import { Live2DCubismFramework as userMotionParam } from '../type/userMotionPara
 import { Live2DCubismFramework as cubismmotionqueuemanager } from '../motion/cubismmotionqueuemanager';
 import { Live2DCubismFramework as cubismbreath } from '../effect/cubismbreath';
 import { Live2DCubismFramework as cubismeyeblink } from '../effect/cubismeyeblink';
-import { Live2DCubismFramework as cubismrenderer_webgl } from '../rendering/cubismrenderer_WebGL';
+import { Live2DCubismFramework as cubismrenderer_webgl } from '../rendering/cubismrenderer_webgl';
 import { CubismLogError, CubismLogInfo } from '../utils/cubismdebug';
 import CubismRenderer_WebGL = cubismrenderer_webgl.CubismRenderer_WebGL;
 import CubismEyeBlink = cubismeyeblink.CubismEyeBlink;
@@ -38,6 +38,7 @@ import CubismPose = cubismpose.CubismPose;
 import CubismExpressionMotion = cubismexpressionmotion.CubismExpressionMotion;
 import CubismMotion = cubismmotion.CubismMotion;
 import ACubismMotion = acubismmotion.ACubismMotion;
+import FinishedMotionCallback = acubismmotion.FinishedMotionCallback;
 import CubismModel = cubismmodel.CubismModel;
 import CubismMoc = cubismmoc.CubismMoc;
 import CubismModelMatrix = cubismmodelmatrix.CubismModelMatrix;
@@ -48,164 +49,172 @@ import { LAppDefine } from '../../lappdefine';
 
 export namespace Live2DCubismFramework {
   /**
-   * 用户实际使用的模型
+   * ユーザーが実際に使用するモデル
    *
-   * 用户实际使用的模型的基类。 这是由用户继承和实现的。
+   * ユーザーが実際に使用するモデルの基底クラス。これを継承してユーザーが実装する。
    */
   export class CubismUserModel {
 
     /**
-     * 事件回调
+     * イベント用のコールバック
      *
-     * 回调以在CubismMotionQueueManager中注册事件。
-     * 调用EventFired，CubismUserModel的继承目的地。
+     * CubismMotionQueueManagerにイベント用に登録するためのCallback。
+     * CubismUserModelの継承先のEventFiredを呼ぶ。
      *
-     * @param caller 管理已触发事件的运动管理器，以进行比较
-     * @param eventValue 已触发事件的字符串数据
-     * @param customData 假设一个实例继承了CubismUserModel
+     * @param caller 発火したイベントを管理していたモーションマネージャー、比較用
+     * @param eventValue 発火したイベントの文字列データ
+     * @param customData CubismUserModelを継承したインスタンスを想定
      */
-    public static cubismDefaultMotionEventCallback(caller: CubismMotionQueueManager, eventValue: csmString, customData: CubismUserModel): void {
+    public static cubismDefaultMotionEventCallback(
+      caller: CubismMotionQueueManager,
+      eventValue: csmString,
+      customData: CubismUserModel,
+    ): void {
       const model: CubismUserModel = customData;
 
       if (model != null) {
         model.motionEventFired(eventValue);
       }
     }
+
     public _modelName: string;        // 模型名称
     public _motionIdleName: string; // 默认发呆的动作名称
 
-    protected _moc: CubismMoc;        // Moc数据
-    protected _model: CubismModel;    // 模型实例
+    protected _moc: CubismMoc; // Mocデータ
+    protected _model: CubismModel; // Modelインスタンス
     protected _modelClear: boolean;   // 清除画布 不显示模型
 
-    protected _motionManager: CubismMotionManager;    // 运动管理
+    protected _motionManager: CubismMotionManager; // モーション管理
     protected _motionQueue: CubismMotionParam[]; // 动作队列
-    protected _expressionManager: CubismMotionManager;    // 面部表情管理
-    protected _eyeBlink: CubismEyeBlink;         // 自动闪烁
-    protected _breath: CubismBreath;           // 呼吸
-    protected _modelMatrix: CubismModelMatrix;      // 模型矩阵
-    protected _pose: CubismPose;             // 暂停管理
-    protected _dragManager: CubismTargetPoint;      // 鼠标拖动
-    protected _physics: CubismPhysics;          // 物理演算
-    protected _modelUserData: CubismModelUserData;    // 用户数据
+    protected _expressionManager: CubismMotionManager; // 表情管理
+    protected _eyeBlink: CubismEyeBlink; // 自動まばたき
+    protected _breath: CubismBreath; // 呼吸
+    protected _modelMatrix: CubismModelMatrix; // モデル行列
+    protected _pose: CubismPose; // ポーズ管理
+    protected _dragManager: CubismTargetPoint; // マウスドラッグ
+    protected _physics: CubismPhysics; // 物理演算
+    protected _modelUserData: CubismModelUserData; // ユーザーデータ
 
-    protected _initialized: boolean;    // 是否已初始化
-    protected _updating: boolean;    // 是否更新
-    protected _opacity: number;     // 不透明度
-    protected _lipsync: boolean;    // 是否唇同步
-    protected _lastLipSyncValue: number;     // 最后唇同步控制位置
-    protected _lipsyncTrend: string; // 唇形变化趋势
-    protected _dragX: number;     // 鼠标拖动X位置
-    protected _dragY: number;     // 鼠标拖动Y位置
-    protected _accelerationX: number;     // X轴加速度
-    protected _accelerationY: number;     // Y轴加速度
-    protected _accelerationZ: number;     // Z轴方向的加速度
+    protected _initialized: boolean; // 初期化されたかどうか
+    protected _updating: boolean; // 更新されたかどうか
+    protected _opacity: number; // 不透明度
+    protected _lipsync: boolean; // リップシンクするかどうか
+    protected _lastLipSyncValue: number; // 最後のリップシンクの制御地
+    protected _dragX: number; // マウスドラッグのX位置
+    protected _dragY: number; // マウスドラッグのY位置
+    protected _accelerationX: number; // X軸方向の加速度
+    protected _accelerationY: number; // Y軸方向の加速度
+    protected _accelerationZ: number; // Z軸方向の加速度
+    protected _debugMode: boolean; // デバッグモードかどうか
 
-    private _renderer: CubismRenderer_WebGL;                  // 渲染
+    private _renderer: CubismRenderer_WebGL; // レンダラ
 
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor() {
-      // 初始化每个变量
-      this._moc = null as any;
-      this._model = null as any;
-      this._motionManager = null as any;
-      this._expressionManager = null as any;
-      this._eyeBlink = null as any;
-      this._breath = null as any;
-      this._modelMatrix = null as any;
-      this._pose = null as any;
-      this._dragManager = null as any;
-      this._physics = null as any;
-      this._modelUserData = null as any;
+      // 各変数初期化
+      this._moc = null;
+      this._model = null;
+      this._motionManager = null;
+      this._expressionManager = null;
+      this._eyeBlink = null;
+      this._breath = null;
+      this._modelMatrix = null;
+      this._pose = null;
+      this._dragManager = null;
+      this._physics = null;
+      this._modelUserData = null;
       this._initialized = false;
       this._updating = false;
       this._opacity = 1.0;
       this._lipsync = true;
       this._lastLipSyncValue = 0.0;
-      this._lipsyncTrend = 'increase';
       this._dragX = 0.0;
       this._dragY = 0.0;
       this._accelerationX = 0.0;
       this._accelerationY = 0.0;
       this._accelerationZ = 0.0;
-      this._renderer = null as any;
+      this._debugMode = false;
+      this._renderer = null;
       this._motionQueue = [];
       this._motionIdleName = LAppDefine.MotionGroupIdle;
       this._modelClear = true;
       this._modelName = '';
 
-      // 创建一个运动管理器
+      // モーションマネージャーを作成
       this._motionManager = new CubismMotionManager();
-      this._motionManager.setEventCallback(CubismUserModel.cubismDefaultMotionEventCallback, this);
+      this._motionManager.setEventCallback(
+        CubismUserModel.cubismDefaultMotionEventCallback,
+        this,
+      );
 
-      // 创建面部表情经理
+      // 表情マネージャーを作成
       this._expressionManager = new CubismMotionManager();
 
-      // 拖动动画
+      // ドラッグによるアニメーション
       this._dragManager = new CubismTargetPoint();
     }
     /**
-     * 获取初始化状态
+     * 初期化状態の取得
      *
-     * 它被初始化了吗？
+     * 初期化されている状態か？
      *
-     * @return true     已初始化
-     * @return false    未初始化
+     * @return true     初期化されている
+     * @return false    初期化されていない
      */
     public isInitialized(): boolean {
       return this._initialized;
     }
 
     /**
-     * 设置初始化状态
+     * 初期化状態の設定
      *
-     * 设置初始化状态
+     * 初期化状態を設定する。
      *
-     * @param v 初始化状态
+     * @param v 初期化状態
      */
     public setInitialized(v: boolean): void {
       this._initialized = v;
     }
 
     /**
-     * 获取更新状态
+     * 更新状態の取得
      *
-     * 它更新了吗？
+     * 更新されている状態か？
      *
-     * @return true     已更新
-     * @return false    未更新
+     * @return true     更新されている
+     * @return false    更新されていない
      */
     public isUpdating(): boolean {
       return this._updating;
     }
 
     /**
-     * 设置更新状态
+     * 更新状態の設定
      *
-     * 设置更新状态
+     * 更新状態を設定する
      *
-     * @param v 更新状态
+     * @param v 更新状態
      */
     public setUpdating(v: boolean): void {
       this._updating = v;
     }
 
     /**
-     * 鼠标拖动信息设置
-     * @param 拖动光标的X位置
-     * @param 拖动光标的Y位置
+     * マウスドラッグ情報の設定
+     * @param ドラッグしているカーソルのX位置
+     * @param ドラッグしているカーソルのY位置
      */
     public setDragging(x: number, y: number): void {
       this._dragManager.set(x, y);
     }
 
     /**
-     * 设置加速度信息
-     * @param x X轴加速度
-     * @param y Y轴加速度
-     * @param z Z轴加速度
+     * 加速度の情報を設定する
+     * @param x X軸方向の加速度
+     * @param y Y軸方向の加速度
+     * @param z Z軸方向の加速度
      */
     public setAcceleration(x: number, y: number, z: number): void {
       this._accelerationX = x;
@@ -214,15 +223,15 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 获取模型矩阵
-     * @return 模型矩阵
+     * モデル行列を取得する
+     * @return モデル行列
      */
     public getModelMatrix(): CubismModelMatrix {
       return this._modelMatrix;
     }
 
     /**
-     * 设置不透明度
+     * 不透明度の設定
      * @param a 不透明度
      */
     public setOpacity(a: number): void {
@@ -230,7 +239,7 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 获得不透明度
+     * 不透明度の取得
      * @return 不透明度
      */
     public getOpacity(): number {
@@ -238,83 +247,99 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 加载模型数据
+     * モデルデータを読み込む
      *
-     * @param buffer    读取moc3文件的缓冲区
+     * @param buffer    moc3ファイルが読み込まれているバッファ
      */
     public loadModel(buffer: ArrayBuffer) {
       this._moc = CubismMoc.create(buffer);
       this._model = this._moc.createModel();
       this._model.saveParameters();
 
-      if ((this._moc == null) || (this._model == null)) {
+      if (this._moc == null || this._model == null) {
         CubismLogError('Failed to CreateModel().');
         return;
       }
 
-      this._modelMatrix = new CubismModelMatrix(this._model.getCanvasWidth(), this._model.getCanvasHeight());
+      this._modelMatrix = new CubismModelMatrix(
+        this._model.getCanvasWidth(),
+        this._model.getCanvasHeight(),
+      );
     }
 
     /**
-     * 加载运动数据
-     * @param buffer 读取motion3.json文件的缓冲区
-     * @param size 缓冲区大小
-     * @param name 动议的名称
-     * @return 运动课
+     * モーションデータを読み込む
+     * @param buffer motion3.jsonファイルが読み込まれているバッファ
+     * @param size バッファのサイズ
+     * @param name モーションの名前
+     * @param onFinishedMotionHandler モーション再生終了時に呼び出されるコールバック関数
+     * @return モーションクラス
      */
-    public loadMotion(buffer: ArrayBuffer, size: number, name: string, priority: number): ACubismMotion {
-      return CubismMotion.create(buffer, size, name, priority);
-    }
+    public loadMotion = (
+      buffer: ArrayBuffer,
+      size: number,
+      name: string,
+      onFinishedMotionHandler?: FinishedMotionCallback,
+    ) => CubismMotion.create(buffer, size, onFinishedMotionHandler)
 
     /**
-     * 加载面部表情数据
-     * @param buffer 读取exp文件的缓冲区
-     * @param size 缓冲区大小
-     * @param name 面部表情名称
+     * 表情データの読み込み
+     * @param buffer expファイルが読み込まれているバッファ
+     * @param size バッファのサイズ
+     * @param name 表情の名前
      */
-    public loadExpression(buffer: ArrayBuffer, size: number, name: string): ACubismMotion {
+    public loadExpression(
+      buffer: ArrayBuffer,
+      size: number,
+      name: string,
+    ): ACubismMotion {
       return CubismExpressionMotion.create(buffer, size);
     }
 
     /**
-     * 读取pose数据
-     * @param buffer 加载pose3.json的缓冲区
-     * @param size 缓冲区大小
+     * ポーズデータの読み込み
+     * @param buffer pose3.jsonが読み込まれているバッファ
+     * @param size バッファのサイズ
      */
     public loadPose(buffer: ArrayBuffer, size: number): void {
       this._pose = CubismPose.create(buffer, size);
     }
 
     /**
-     * 加载附加到模型的用户数据
-     * @param buffer 读取userdata3.json的缓冲区
-     * @param size 缓冲区大小
+     * モデルに付属するユーザーデータを読み込む
+     * @param buffer userdata3.jsonが読み込まれているバッファ
+     * @param size バッファのサイズ
      */
     public loadUserData(buffer: ArrayBuffer, size: number): void {
       this._modelUserData = CubismModelUserData.create(buffer, size);
     }
 
     /**
-     * 读物理数据
-     * @param buffer  加载physics3.json的缓冲区
-     * @param size    缓冲区大小
+     * 物理演算データの読み込み
+     * @param buffer  physics3.jsonが読み込まれているバッファ
+     * @param size    バッファのサイズ
      */
     public loadPhysics(buffer: ArrayBuffer, size: number): void {
       this._physics = CubismPhysics.create(buffer, size);
     }
 
     /**
-     * 得到命中判断
-     * @param drawableId 要验证的Drawable的ID
+     * 当たり判定の取得
+     * @param drawableId 検証したいDrawableのID
      * @param pointX X位置
      * @param pointY Y位置
-     * @return true 它已被打
-     * @return false 没打
+     * @return true ヒットしている
+     * @return false ヒットしていない
      */
-    public isHit(drawableId: CubismIdHandle, pointX: number, pointY: number): boolean {
+    public isHit(
+      drawableId: CubismIdHandle,
+      pointX: number,
+      pointY: number,
+    ): boolean {
       const drawIndex: number = this._model.getDrawableIndex(drawableId);
+
       if (drawIndex < 0) {
-        return false; // 如果不存在则为false
+        return false; // 存在しない場合はfalse
       }
 
       const count: number = this._model.getDrawableVertexCount(drawIndex);
@@ -325,7 +350,7 @@ export namespace Live2DCubismFramework {
       let top: number = vertices[1];
       let bottom: number = vertices[1];
 
-      for (let j: number = 1; j < count; ++j) {
+      for (let j = 1; j < count; ++j) {
         const x = vertices[Constant.vertexOffset + j * Constant.vertexStep];
         const y = vertices[Constant.vertexOffset + j * Constant.vertexStep + 1];
 
@@ -349,27 +374,27 @@ export namespace Live2DCubismFramework {
       const tx: number = this._modelMatrix.invertTransformX(pointX);
       const ty: number = this._modelMatrix.invertTransformY(pointY);
 
-      return ((left <= tx) && (tx <= right) && (top <= ty) && (ty <= bottom));
+      return left <= tx && tx <= right && top <= ty && ty <= bottom;
     }
 
     /**
-     * 获得模型
-     * @return 模型
+     * モデルの取得
+     * @return モデル
      */
     public getModel(): CubismModel {
       return this._model;
     }
 
     /**
-     * 获取渲染器
-     * @return 渲染器
+     * レンダラの取得
+     * @return レンダラ
      */
     public getRenderer(): CubismRenderer_WebGL {
       return this._renderer;
     }
 
     /**
-     * 创建渲染器并执行初始化
+     * レンダラを作成して初期化を実行する
      */
     public createRenderer(): void {
       if (this._renderer) {
@@ -381,55 +406,55 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 渲染器释放
+     * レンダラの解放
      */
     public deleteRenderer(): void {
       if (this._renderer != null) {
         this._renderer.release();
-        this._renderer = null as any;
+        this._renderer = null;
       }
     }
 
     /**
-     * 事件发射时的标准处理
+     * イベント発火時の標準処理
      *
-     * 在播放处理期间发生事件时的处理。
-     * 假设它被继承覆盖。
-     * 如果未覆盖则记录输出。
+     * Eventが再生処理時にあった場合の処理をする。
+     * 継承で上書きすることを想定している。
+     * 上書きしない場合はログ出力をする。
      *
-     * @param eventValue 已触发事件的字符串数据
+     * @param eventValue 発火したイベントの文字列データ
      */
     public motionEventFired(eventValue: csmString): void {
       CubismLogInfo('{0}', eventValue.s);
     }
 
     /**
-     * 处理等同于析构函数
+     * デストラクタに相当する処理
      */
     public release() {
       if (this._motionManager != null) {
         this._motionManager.release();
-        this._motionManager = null as any;
+        this._motionManager = null;
       }
 
       if (this._expressionManager != null) {
         this._expressionManager.release();
-        this._expressionManager = null as any;
+        this._expressionManager = null;
       }
 
       if (this._moc != null) {
         this._moc.deleteModel(this._model);
         this._moc.release();
-        this._moc = null as any;
+        this._moc = null;
       }
 
-      this._modelMatrix = null as any;
+      this._modelMatrix = null;
 
       CubismPose.delete(this._pose);
       CubismEyeBlink.delete(this._eyeBlink);
       CubismBreath.delete(this._breath);
 
-      this._dragManager = null as any;
+      this._dragManager = null;
 
       CubismPhysics.delete(this._physics);
       CubismModelUserData.delete(this._modelUserData);
@@ -437,5 +462,4 @@ export namespace Live2DCubismFramework {
       this.deleteRenderer();
     }
   }
-
 }

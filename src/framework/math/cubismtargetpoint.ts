@@ -1,36 +1,34 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
 import { Live2DCubismFramework as cubismmath } from './cubismmath';
 import CubismMath = cubismmath.CubismMath;
 
-
 export namespace Live2DCubismFramework {
-  const FrameRate: number = 30;
-  const Epsilon: number = 0.01;
+  const FrameRate = 30;
+  const Epsilon = 0.01;
 
   /**
-   * 面部定向控制功能
+   * 顔の向きの制御機能
    *
-   * 提供面部方向控制功能的类
+   * 顔の向きの制御機能を提供するクラス。
    */
   export class CubismTargetPoint {
 
-
-    private _faceTargetX: number;       // 面部方向的X目标值（接近此值）
-    private _faceTargetY: number;       // 面部方向的Y目标值（接近此值）
-    private _faceX: number;             // 面朝X（-1.0到1.0）
-    private _faceY: number;             // 面朝Y（-1.0到1.0）
-    private _faceVX: number;            // 面部方向改变速度X.
-    private _faceVY: number;            // 面部方向改变速度Y.
-    private _lastTimeSeconds: number;   // 上次执行时间[秒]
-    private _userTimeSeconds: number;   // 增量时间的综合值[秒]
+    private _faceTargetX: number; // 顔の向きのX目標値（この値に近づいていく）
+    private _faceTargetY: number; // 顔の向きのY目標値（この値に近づいていく）
+    private _faceX: number; // 顔の向きX（-1.0 ~ 1.0）
+    private _faceY: number; // 顔の向きY（-1.0 ~ 1.0）
+    private _faceVX: number; // 顔の向きの変化速度X
+    private _faceVY: number; // 顔の向きの変化速度Y
+    private _lastTimeSeconds: number; // 最後の実行時間[秒]
+    private _userTimeSeconds: number; // デルタ時間の積算値[秒]
     /**
-     * 构造函数
+     * コンストラクタ
      */
     public constructor() {
       this._faceTargetX = 0.0;
@@ -44,81 +42,87 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 更新过程
+     * 更新処理
      */
     public update(deltaTimeSeconds: number): void {
-      // 添加增量时间
+      // デルタ時間を加算する
       this._userTimeSeconds += deltaTimeSeconds;
 
-      // 从一侧到另一侧摆动颈部时的平均速度是第二速度。 考虑加速度和减速度，使最大速度加倍
-      // 从中心（0.0）左右摆动（+ -1.0)
-      const faceParamMaxV: number = 40.0 / 10.0;              // 在7.5秒内移动40分钟（5.3 / sc）
-      const maxV: number = faceParamMaxV * 1.0 / FrameRate;   // 每帧可以更改的最大速度
+      // 首を中央から左右に振るときの平均的な速さは 秒速度。加速・減速を考慮して、その２倍を最高速度とする
+      // 顔の振り具合を、中央（0.0）から、左右は（+-1.0）とする
+      const faceParamMaxV: number = 40.0 / 10.0; // 7.5秒間に40分移動(5.3/sc)
+      const maxV: number = (faceParamMaxV * 1.0) / FrameRate; // 1frameあたりに変化できる速度の上限
 
       if (this._lastTimeSeconds == 0.0) {
         this._lastTimeSeconds = this._userTimeSeconds;
         return;
       }
 
-      const deltaTimeWeight: number = (this._userTimeSeconds - this._lastTimeSeconds) * FrameRate;
+      const deltaTimeWeight: number =
+        (this._userTimeSeconds - this._lastTimeSeconds) * FrameRate;
       this._lastTimeSeconds = this._userTimeSeconds;
 
-      // 是时候达到最高速度了
-      const timeToMaxSpeed: number = 0.15;
-      const frameToMaxSpeed: number = timeToMaxSpeed * FrameRate;     // sec * frame/sec
-      const maxA: number = deltaTimeWeight * maxV / frameToMaxSpeed;  // 每帧加速度
+      // 最高速度になるまでの時間を
+      const timeToMaxSpeed = 0.15;
+      const frameToMaxSpeed: number = timeToMaxSpeed * FrameRate; // sec * frame/sec
+      const maxA: number = (deltaTimeWeight * maxV) / frameToMaxSpeed; // 1frameあたりの加速度
 
-      // 目标方向是（dx，dy）方向的矢量
+      // 目指す向きは、（dx, dy）方向のベクトルとなる
       const dx: number = this._faceTargetX - this._faceX;
       const dy: number = this._faceTargetY - this._faceY;
 
       if (CubismMath.abs(dx) <= Epsilon && CubismMath.abs(dy) <= Epsilon) {
-        return; // 没有变化
+        return; // 変化なし
       }
 
-      // 如果大于最大速度，则降低速度
-      const d: number = CubismMath.sqrt((dx * dx) + (dy * dy));
+      // 速度の最大よりも大きい場合は、速度を落とす
+      const d: number = CubismMath.sqrt(dx * dx + dy * dy);
 
-      // 行进方向上的最大速度矢量
-      const vx: number = maxV * dx / d;
-      const vy: number = maxV * dy / d;
+      // 進行方向の最大速度ベクトル
+      const vx: number = (maxV * dx) / d;
+      const vy: number = (maxV * dy) / d;
 
-      // 找到从当前速度到新速度的变化（加速度）
+      // 現在の速度から、新規速度への変化（加速度）を求める
       let ax: number = vx - this._faceVX;
       let ay: number = vy - this._faceVY;
 
-      const a: number = CubismMath.sqrt((ax * ax) + (ay * ay));
+      const a: number = CubismMath.sqrt(ax * ax + ay * ay);
 
-      // 加速时
+      // 加速のとき
       if (a < -maxA || a > maxA) {
         ax *= maxA / a;
         ay *= maxA / a;
       }
 
-      // 将加速度添加到原始速度以获得新速度
+      // 加速度を元の速度に足して、新速度とする
       this._faceVX += ax;
       this._faceVY += ay;
 
-      // 处理在接近目标方向时平滑减速
-      // 从距离和速度之间的关系可以停止在设定的加速度
-      // 计算现在可以采取的最大速度，并在超过该速度时降低速度
-      // ※最初，人类可以通过肌肉力量调整力（加速度），因此它们具有更高的自由度，但是简单的处理就足够了。
+      // 目的の方向に近づいたとき、滑らかに減速するための処理
+      // 設定された加速度で止まる事の出来る距離と速度の関係から
+      // 現在とりうる最高速度を計算し、それ以上の時は速度を落とす
+      // ※本来、人間は筋力で力（加速度）を調整できるため、より自由度が高いが、簡単な処理で済ませている
       {
-        // 加速度，速度和距离的关系表达式
+        // 加速度、速度、距離の関係式。
         //            2  6           2               3
         //      sqrt(a  t  + 16 a h t  - 8 a h) - a t
         // v = --------------------------------------
         //                    2
         //                 4 t  - 2
         // (t=1)
-        // 	在时间t，加速度和速度被预先设置为1/60（帧速率，无单位）。
-        // 	我们认为，可以删除t = 1（*未经验证）
+        // 	時刻tは、あらかじめ加速度、速度を1/60(フレームレート、単位なし)で
+        // 	考えているので、t＝１として消してよい（※未検証）
 
-        const maxV: number = 0.5 * (CubismMath.sqrt((maxA * maxA) + 16.0 * maxA * d - 8.0 * maxA * d) - maxA);
-        const curV: number = CubismMath.sqrt((this._faceVX * this._faceVX) + (this._faceVY * this._faceVY));
+        const maxV: number =
+          0.5 *
+          (CubismMath.sqrt(maxA * maxA + 16.0 * maxA * d - 8.0 * maxA * d) -
+            maxA);
+        const curV: number = CubismMath.sqrt(
+          this._faceVX * this._faceVX + this._faceVY * this._faceVY,
+        );
 
         if (curV > maxV) {
-          // 如果当前速度>最大速度，则减速到最大速度
+          // 現在の速度 > 最高速度のとき、最高速度まで減速
           this._faceVX *= maxV / curV;
           this._faceVY *= maxV / curV;
         }
@@ -129,33 +133,32 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 在X轴上获取面部方向值
+     * X軸の顔の向きの値を取得
      *
-     * @return X轴面定向值（-1.0到1.0）
+     * @return X軸の顔の向きの値（-1.0 ~ 1.0）
      */
     public getX(): number {
       return this._faceX;
     }
 
     /**
-     * 在Y轴上获取面部方向值
+     * Y軸の顔の向きの値を取得
      *
-     * @return Y轴面定向值（-1.0到1.0)
+     * @return Y軸の顔の向きの値（-1.0 ~ 1.0）
      */
     public getY(): number {
       return this._faceY;
     }
 
     /**
-     * 设置面部方向的目标值
+     * 顔の向きの目標値を設定
      *
-     * @param x X轴面定向值（-1.0到1.0）
-     * @param y Y轴面定向值（-1.0到1.0）
+     * @param x X軸の顔の向きの値（-1.0 ~ 1.0）
+     * @param y Y軸の顔の向きの値（-1.0 ~ 1.0）
      */
     public set(x: number, y: number): void {
       this._faceTargetX = x;
       this._faceTargetY = y;
     }
-
   }
 }

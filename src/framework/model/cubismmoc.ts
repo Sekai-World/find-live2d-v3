@@ -1,28 +1,29 @@
-/*
+/**
  * Copyright(c) Live2D Inc. All rights reserved.
  *
  * Use of this source code is governed by the Live2D Open Software license
- * that can be found at http://live2d.com/eula/live2d-open-software-license-agreement_en.html.
+ * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-/// <reference path="../../live2dcubismcore.d.ts" />
 import { Live2DCubismFramework as cubismmodel } from './cubismmodel';
 import CubismModel = cubismmodel.CubismModel;
 import { CSM_ASSERT } from '../utils/cubismdebug';
 
 export namespace Live2DCubismFramework {
   /**
-   * 管理Moc数据
+   * Mocデータの管理
    *
-   * 管理Moc数据的类。
+   * Mocデータの管理を行うクラス。
    */
   export class CubismMoc {
     /**
-     * 创建Moc数据
+     * Mocデータの作成
      */
     public static create(mocBytes: ArrayBuffer): CubismMoc {
-      let cubismMoc: CubismMoc = null as any;
-      const moc: Live2DCubismCore.Moc = Live2DCubismCore.Moc.fromArrayBuffer(mocBytes);
+      let cubismMoc: CubismMoc = null;
+      const moc: Live2DCubismCore.Moc = Live2DCubismCore.Moc.fromArrayBuffer(
+        mocBytes,
+      );
 
       if (moc) {
         cubismMoc = new CubismMoc(moc);
@@ -32,22 +33,21 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 删除Moc数据
+     * Mocデータを削除
      *
-     * 删除Moc数据
+     * Mocデータを削除する
      */
     public static delete(moc: CubismMoc): void {
       moc._moc._release();
-      moc._moc = null as any;
-      moc = null as any;
+      moc._moc = null;
+      moc = null;
     }
 
-    public _moc: Live2DCubismCore.Moc; /// Moc数据
-    public _modelCount: number;        /// < 从Moc数据制作的模型数量
-
+    public _moc: Live2DCubismCore.Moc; // Mocデータ
+    public _modelCount: number; // Mocデータから作られたモデルの個数
 
     /**
-     * 构造函数
+     * コンストラクタ
      */
     private constructor(moc: Live2DCubismCore.Moc) {
       this._moc = moc;
@@ -55,14 +55,16 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 创建一个模型
+     * モデルを作成する
      *
-     * @return 从Moc数据创建的模型
+     * @return Mocデータから作成されたモデル
      */
     public createModel(): CubismModel {
-      let cubismModel: CubismModel = null as any;
+      let cubismModel: CubismModel = null;
 
-      const model: Live2DCubismCore.Model = Live2DCubismCore.Model.fromMoc(this._moc);
+      const model: Live2DCubismCore.Model = Live2DCubismCore.Model.fromMoc(
+        this._moc,
+      );
 
       if (model) {
         cubismModel = new CubismModel(model);
@@ -75,24 +77,24 @@ export namespace Live2DCubismFramework {
     }
 
     /**
-     * 删除模型
+     * モデルを削除する
      */
     public deleteModel(model: CubismModel): void {
       if (model != null) {
         model.release();
-        model = null as any;
+        model = null;
         --this._modelCount;
       }
     }
 
     /**
-     * 析构函数等效处理
+     * デストラクタ相当の処理
      */
     public release(): void {
       CSM_ASSERT(this._modelCount == 0);
 
       this._moc._release();
-      this._moc = null as any;
+      this._moc = null;
     }
   }
 }
