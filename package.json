@@ -15,16 +15,17 @@
   },
   "license": "MIT",
   "main": "./dist/index.js",
-  "name": "find-live2d3",
+  "name": "@sekai-world/find-live2d-v3",
   "private": false,
   "scripts": {
+    "prepublish": "npm run build",
     "build": "npm run tsc && npm run types",
     "lint": "tslint --fix src/**/*.ts src/**/*.tsx",
     "tsc": "tsc",
     "types": "tsc -d --emitDeclarationOnly --allowJs false --declarationDir ./dist/types/"
   },
   "types": "./dist/types/index.d.ts",
-  "version": "1.5.2",
+  "version": "1.6.10",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sekai-World/find-live2d-v3.git"
