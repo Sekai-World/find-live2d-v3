@@ -19,6 +19,7 @@
   "private": false,
   "scripts": {
     "prepublish": "npm run build",
+    "postversion": "npm publish --access public",
     "build": "npm run tsc && npm run types",
     "lint": "tslint --fix src/**/*.ts src/**/*.tsx",
     "tsc": "tsc",
