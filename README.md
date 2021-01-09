@@ -1,13 +1,13 @@
 # 基于live2d 3.3.1
 ## 安装
 ``` bash
-$ yarn add find-live2d3
+$ yarn add @sekai-world/find-live2d-v3
 or
-$ npm install find-live2d3
+$ npm install @sekai-world/find-live2d-v3
 ```
 ## 初始化
 ``` typescript
-import live2d from 'find-live2d3'
+import live2d from '@sekai-world/find-live2d-v3'
 /** 初始化live2d
  * @param renderConfig?: { efficient: boolean, // 是否使用全效能模式
  *  fps?: number // 不使用全效模式事, 手动设置帧率. 默认60
