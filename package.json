@@ -19,14 +19,13 @@
   "private": false,
   "scripts": {
     "prepublish": "yarn build",
-    "postversion": "yarn publish --access public",
     "build": "yarn tsc && yarn types",
     "lint": "tslint --fix src/**/*.ts src/**/*.tsx",
     "tsc": "tsc",
     "types": "tsc -d --emitDeclarationOnly --allowJs false --declarationDir ./dist/types/"
   },
   "types": "./dist/types/index.d.ts",
-  "version": "1.6.15",
+  "version": "1.6.16",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sekai-World/find-live2d-v3.git"
