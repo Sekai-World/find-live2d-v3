@@ -822,7 +822,7 @@ export class LAppModel extends CubismUserModel {
         motion,
         false,
         LAppDefine.PriorityForce,
-        this
+        this,
       );
     } else {
       if (LAppDefine.DebugMode) {
